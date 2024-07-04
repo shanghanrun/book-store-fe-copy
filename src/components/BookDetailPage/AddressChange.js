@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { SET_FULL_ADDRESS } from '../../constants/order.constants';
-// eslint-disable-next-line import/no-named-as-default
+
 import styled from 'styled-components';
 
 // Styled component for the dropdown container

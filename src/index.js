@@ -9,7 +9,7 @@ import theme from './theme';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './reducer/store';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 // import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;

@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import BookCard from '../BookCard';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import Carousel from 'react-multi-carousel';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import 'react-multi-carousel/lib/styles.css';
 import './BookSlider.css';
 import CustomRightArrow from './CustomRightArrow';

@@ -29,9 +29,9 @@ const cartStore = create((set,get)=>({
 		}catch(e){
 
 		}
-	}
+	},
 
-	const getCartList: async()=>{
+	getCartList: async()=>{
 		try{
 			const resp = await api.get('/cart');
     		if (resp.status !== 200) throw new Error(response.error);
@@ -76,7 +76,7 @@ const cartStore = create((set,get)=>({
 		}catch(e){
 
 		}
-	}
+	},
 	setBookGroup:()=>{},
 	resetBookListByCategory:()=>{}
 

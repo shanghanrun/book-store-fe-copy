@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { CloudinaryContext, Image } from 'cloudinary-react';
 
 const CLOUDNAME = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Link } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { FaGithub, FaTwitter, FaInstagram } from 'react-icons/fa'; // Importing icons
 
 const Footer = () => {
