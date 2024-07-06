@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Grid, Button, TextField, Box, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
+import userStore from '../store/userStore'
 import { userActions } from '../action/userActions';
 
 const RegisterPage = () => {
@@ -22,6 +23,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { error, loading } = useSelector((state) => state.user);
+  const {registerUser} =userStore()
 
   useEffect(() => {
     if (error === 'User already exists') {
@@ -75,7 +77,7 @@ const RegisterPage = () => {
     }
 
     const payload = { userName, email, password, address, phone, policy };
-    dispatch(userActions.registerUser(payload, navigate));
+    registerUser(payload, navigate);
   };
 
   return (

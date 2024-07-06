@@ -11,7 +11,6 @@ const LoginPage = () => {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const location = useLocation();
   const { user, loginWithEmail } = userStore()
   const isSmallScreen = useMediaQuery('(max-width:600px)');
