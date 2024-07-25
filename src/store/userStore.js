@@ -27,6 +27,10 @@ const userStore =create((set,get)=>({
 		try{
 			console.log('주문시 credit, coupon, creditPlus:', credit,':',coupon,':',creditPlus)
 			const resp = await api.post('/user/credit-coupon',{userId, credit,coupon,creditPlus})
+			console.log('resp: ', resp);
+			set({user: resp.data.user})
+
+			
 
 			//우선 아무것도 안한다.
 		}catch(e){

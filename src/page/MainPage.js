@@ -1,29 +1,45 @@
 import React, { useEffect } from 'react';
 import { Box, Container, IconButton, useMediaQuery } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
 
 import BooksCarousel from '../components/BooksCarousel/BooksCarousel';
 import BookContainer from '../components/BookContainer/BookContainer';
 import CarouselSlide from '../components/CarouselSlide';
 import { getCategories } from '../_helper/getCategories';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import { favoriteActions } from '../action/favoriteActions';
+// import { favoriteActions } from '../action/favoriteActions';
+
+import favoriteStore from '../store/favoriteStore'
+import bookStore from '../store/bookStore';
+import userStore from '../store/userStore';
 
 const MainPage = () => {
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
-  const { bookList } = useSelector((state) => state.book);
+  // const dispatch = useDispatch();
+  // const { user } = useSelector((state) => state.user);
+  // const { bookList } = useSelector((state) => state.book);
+  const {user} = userStore()
+  const {bookList}=bookStore()
+  const { clearFavorite } = favoriteStore()
   const isMobile = useMediaQuery('(max-width: 600px)');
 
-  if (!bookList) {
-    return null;
+
+  useEffect(() => {  // useEffect가 if(!bookList)보다 앞에 있어야 가독성이 좋다.
+    if (!user) {
+      clearFavorite();
+    }
+  }, [user]);
+  // if (!bookList) {
+  //   return null;
+  // }
+  if (!bookList || bookList.length === 0) {
+    return <div>Loading...</div>;
   }
 
-  useEffect(() => {
-    if (!user) {
-      dispatch(favoriteActions.clearFavorite());
-    }
-  }, [dispatch, user]);
+  // useEffect(() => {
+  //   if (!user) {
+  //     clearFavorite();
+  //   }
+  // }, [user]);
 
   const blogBestBooks = bookList.filter((book) => book.queryType === 'BlogBest');
   const bestSeller = bookList.filter((book) => book.queryType === 'BestSeller');

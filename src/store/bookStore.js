@@ -1,6 +1,5 @@
 import {create} from 'zustand'
 import api from '../utils/api';
-import * as types from '../constants/book.constants';
 import uiStore from './uiStore'
 
 const bookStore = create((set,get)=>({
@@ -31,7 +30,9 @@ const bookStore = create((set,get)=>({
 			const resp = await api.get('/book', {
 				params:{...query}
 			})
-			set({bookList: resp.data.data})
+			// console.log('getBookList의 resp.data', resp.data)
+			console.log('bookList', resp.data.books)// books였다!
+			set({bookList: resp.data.books})
 		}catch(e){
 			console.log(e.error)
 		}
@@ -59,7 +60,7 @@ const bookStore = create((set,get)=>({
 			const resp = await api.get(`book/detail/${id}`);
     		if (response.status !== 200) throw new Error(response.error);
 		}catch(e){
-			uiStore.getState().showToastMessage(e.error.'error')
+			uiStore.getState().showToastMessage(e.error,'error')
 		}
 	},
 	deleteBook:async(id)=>{

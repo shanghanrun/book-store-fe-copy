@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, MenuItem, Box, IconButton, useTheme, useMediaQuery } from '@mui/material';
-import { categoryActions } from '../action/categoryActions';
-import { useDispatch } from 'react-redux';
+// import { categoryActions } from '../action/categoryActions';
+// import { useDispatch } from 'react-redux';
+import categoryStore from '../store/categoryStore';
+
 import { useNavigate } from 'react-router-dom';
 import CategoryPopOver from './CategoryPopOver';
 import { getCategoryHierarchy } from '../_helper/getCategoryHierarchy';
@@ -11,14 +13,15 @@ import { getBookGroupArray } from '../_helper/getBookGroupArray';
 import MenuIcon from '@mui/icons-material/Menu';
 
 const CategoryBar = ({ bookList }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  const {categoryList, getCategoryList} = categoryStore()
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    dispatch(categoryActions.getCategoryList());
-  }, [dispatch]);
+    getCategoryList();
+  }, []);
 
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -36,7 +39,7 @@ const CategoryBar = ({ bookList }) => {
   const id = canBeOpen ? 'transition-popper' : undefined;
 
   const totalCategories = [];
-  bookList.map((book) => {
+  bookList?.map((book) => {
     return totalCategories.push(book.categoryName);
   });
 

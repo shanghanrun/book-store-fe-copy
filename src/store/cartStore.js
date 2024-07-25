@@ -1,6 +1,5 @@
 import {create} from 'zustand'
 import api from '../utils/api';
-import * as types from '../constants/cart.constants';
 import { USER_LOGOUT } from '../constants/user.constants';
 import uiStore from './uiStore'
 
