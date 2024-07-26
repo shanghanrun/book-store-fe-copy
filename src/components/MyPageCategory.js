@@ -19,13 +19,11 @@ import {
 } from '@mui/material';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
-import { useDispatch, useSelector } from 'react-redux';
-import { userActions } from '../action/userActions';
+import userStore from '../store/userStore';
 
 const MyPageCategory = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.user);
+  const { user,loginWithToken } = userStore();
   const userLevel = ['bronze', 'silver', 'gold', 'platinum'];
   const [openPopup, setOpenPopup] = useState(false);
   const [anchorElShop, setAnchorElShop] = useState(null);
@@ -34,9 +32,9 @@ const MyPageCategory = () => {
 
   useEffect(() => {
     if (!user) {
-      dispatch(userActions.loginWithToken());
+      loginWithToken();
     }
-  }, [dispatch]);
+  }, []);
 
   const handleEventClick = () => {
     setOpenPopup(true);
@@ -175,15 +173,13 @@ const MyPageCategory = () => {
                   ? userLevel?.map((level, index) => (
                       <Box
                         key={index}
-                        display="flex"
-                        flexDirection="column"
-                        alignItems="center"
                         mr={1.5}
                         sx={{
                           width: 45,
                           height: 45,
                           borderRadius: '50%',
                           display: 'flex',
+                          flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'center',
                           bgcolor: user?.level === level ? '#3d643d' : '#f0f0f0',
@@ -204,8 +200,8 @@ const MyPageCategory = () => {
               <Typography color="primary">나의 쇼핑</Typography>
               <Box>
                 {myShoppingList?.map((item, index) => (
-                  <Box key={item._id} m={1} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    <Link href={item.link} underline="hover" color="inherit" key={index}>
+                  <Box key={index} m={1} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <Link href={item.link} underline="hover" color="inherit">
                       {item.list}
                     </Link>
                   </Box>
@@ -219,11 +215,11 @@ const MyPageCategory = () => {
               <Box mb={2}>
                 {myInfoList?.map((item, index) => (
                   <Box m={1} key={index}>
-                    {item.link ? (
+                    {item.link ? (   // link인 경우
                       <Link href={item.link} underline="hover" color="inherit">
                         {item.list}
                       </Link>
-                    ) : (
+                    ) : (     // action인 경우
                       <Typography variant="body1" color="inherit" sx={{ cursor: 'pointer' }} onClick={item.action}>
                         {item.list}
                       </Typography>

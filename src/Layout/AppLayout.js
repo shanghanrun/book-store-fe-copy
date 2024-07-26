@@ -1,11 +1,7 @@
 import React, { useEffect } from 'react';
 import NavBar from '../components/Navbar';
-// import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import ToastMessage from '../components/ToastMessage';
-// import { userActions } from '../action/userActions';
-// import { bookActions } from '../action/bookActions';
-// import { cartActions } from '../action/cartActions';
 import userStore from '../store/userStore';
 import bookStore from '../store/bookStore';
 import cartStore from '../store/cartStore';
@@ -16,9 +12,7 @@ import CategoryBar from '../components/CategoryBar';
 import { Box, Typography, useMediaQuery } from '@mui/material';
 
 const AppLayout = ({ children }) => {
-  // const dispatch = useDispatch();
   const location = useLocation();
-  // const { user } = useSelector((state) => state.user);
   const {user, loginWithToken} = userStore();
   const {getCartQty} = cartStore()
   const { bookList, bookGroup, getBookList } = bookStore()
@@ -29,7 +23,6 @@ const AppLayout = ({ children }) => {
   useEffect(() => {
     loginWithToken();
     console.log('bookList 불러오기...')
-    // getBookList({}) // 여기에도 넣어 본다.
   }, []);
 
   useEffect(() => {
@@ -38,14 +31,10 @@ const AppLayout = ({ children }) => {
     }
   }, [user]);
 
-  // const { bookList, bookGroup } = useSelector((state) => state.book);
-
   useEffect(() => {
     if (bookGroup) {
-      // dispatch(bookActions.getBookList({ queryType: bookGroup }));
       getBookList({ queryType: bookGroup })
     } else {
-      // dispatch(bookActions.getBookList({}));
       getBookList({})
     }
   }, [bookGroup]);

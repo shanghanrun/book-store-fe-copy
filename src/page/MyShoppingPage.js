@@ -17,25 +17,25 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import MyPageCategory from '../components/MyPageCategory';
-import { useDispatch, useSelector } from 'react-redux';
-import { contactActions } from '../action/contactActions';
 import InquiryTable from '../components/InquiryTable';
-import { orderActions } from '../action/orderActions';
 import MyPageWishlistTable from '../components/MyPageWishlistTable';
 import MyPageMyReviewTable from '../components/MyPageMyReviewTable';
 
+import userStore from '../store/userStore';
+import contactStore from '../store/contactStore';
+import orderStore from '../store/orderStore';
+
 const MyShoppingPage = () => {
-  const dispatch = useDispatch();
   const [tabIndex, setTabIndex] = useState(0);
-  const { user } = useSelector((state) => state.user);
-  const { myOrderList } = useSelector((state) => state.order);
-  const { userContacts } = useSelector((state) => state.contact);
+  const {user} = userStore()
+  const {myOrderList, getMyOrder} = orderStore()
+  const {userContacts, getContactsByUser} = contactStore()
   const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
-    dispatch(orderActions.getMyOrder());
-    dispatch(contactActions.getContactsByUser());
-  }, [dispatch]);
+    getMyOrder();
+    getContactsByUser();
+  }, []);
 
   // console.log('user', user);
 

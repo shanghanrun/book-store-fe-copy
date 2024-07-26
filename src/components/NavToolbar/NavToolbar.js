@@ -1,38 +1,48 @@
 import Box from '@mui/material/Box';
-import { bookActions } from '../../action/bookActions';
-import { categoryActions } from '../../action/categoryActions';
+// import { bookActions } from '../../action/bookActions';
+// import { categoryActions } from '../../action/categoryActions';
 import SearchBook from '../SearchBook';
 import { IconButton, Menu, useMediaQuery, useTheme, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Badge } from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Toolbar from '@mui/material/Toolbar';
-import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import { userActions } from '../../action/userActions';
+import Toolbar from '@mui/material/Toolbar';
+
+import PersonIcon from '@mui/icons-material/Person';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
+import React, { useState } from 'react';
+
+// import { userActions } from '../../action/userActions';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
-const logIn = '로그인';
-const logOut = '로그아웃';
-const register = '회원가입';
-const cart = '장바구니';
+import cartStore from './../../store/cartStore';
+import userStore from './../../store/userStore';
+import bookStore from './../../store/bookStore';
+import categoryStore from './../../store/categoryStore';
+
+const LOGIN = '로그인';
+const LOGOUT = '로그아웃';
+const REGISTER = '회원가입';
+const CART = '장바구니';
 
 const NavToolbar = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.user);
-  const { cartItemCount } = useSelector((state) => state.cart);
+  const {user, logout} = userStore()
+  const {cartItemCount} = cartStore()
+  const {getBookList} = bookStore()
+  const {setSelectedCategory} = categoryStore()
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleLogout = () => {
-    dispatch(userActions.logout());
+    logout();
     navigate('/');
   };
 
@@ -64,7 +74,7 @@ const NavToolbar = () => {
     });
     const query = params.toString();
     navigate('?' + query);
-    dispatch(bookActions.getBookList(newSearchQuery));
+    getBookList(newSearchQuery);
   };
 
   const resetSearch = () => {
@@ -96,7 +106,7 @@ const NavToolbar = () => {
             minWidth: '100px',
           }}
           onClick={() => navigate('/login')}>
-          {logIn}
+          {LOGIN}
         </Button>
       ) : (
         <Button
@@ -109,7 +119,7 @@ const NavToolbar = () => {
             minWidth: '100px',
           }}
           onClick={handleLogout}>
-          {logOut}
+          {LOGOUT}
         </Button>
       )}
       {!user && (
@@ -123,7 +133,7 @@ const NavToolbar = () => {
             minWidth: '100px',
           }}
           onClick={() => navigate('/register')}>
-          {register}
+          {REGISTER}
         </Button>
       )}
       {user && user.role === 'customer' && (
@@ -150,7 +160,7 @@ const NavToolbar = () => {
           minWidth: '130px',
         }}
         onClick={handleCartClick}>
-        {cart} ({cartItemCount || 0})
+        {CART} ({cartItemCount || 0})
       </Button>
       {user && user.role === 'admin' && (
         <Button
@@ -195,7 +205,7 @@ const NavToolbar = () => {
                 popupState.close();
                 handleLogout();
               }}>
-              {logOut}
+              {LOGOUT}
             </MenuItem>,
             user.role === 'admin' && (
               <MenuItem
@@ -215,7 +225,7 @@ const NavToolbar = () => {
                 popupState.close();
                 navigate('/login');
               }}>
-              {logIn}
+              {LOGIN}
             </MenuItem>,
             <MenuItem
               key="register"
@@ -223,7 +233,7 @@ const NavToolbar = () => {
                 popupState.close();
                 navigate('/register');
               }}>
-              {register}
+              {REGISTER}
             </MenuItem>,
           ]}
     </Menu>
@@ -244,8 +254,8 @@ const NavToolbar = () => {
           onClick={() => {
             navigate('/');
             setSearchQuery({});
-            dispatch(bookActions.getBookList({}));
-            dispatch(categoryActions.setSelectedCategory(null));
+            getBookList({});
+            setSelectedCategory(null);
           }}
           sx={{ cursor: 'pointer', padding: 1, display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'flex-start' : 'center' }}>
           <img src="/logo1.png" alt="로고 이미지" style={{ color: '#d3ddbd', borderRadius: '3px', height: isMobile ? '3.5rem' : isTablet ? '5rem' : '7rem' }} />
@@ -283,7 +293,7 @@ const NavToolbar = () => {
         </Box>
       </Toolbar>
 
-      <Dialog open={isDialogOpen} onClose={handleDialogClose}>
+      <Dialog open={isDialogOpen} onClose={handleDialogClose}> 
         <DialogTitle>로그인이 필요합니다</DialogTitle>
         <DialogContent>
           <DialogContentText>장바구니로 이동하려면 로그인이 필요합니다. 로그인을 진행해 주세요.</DialogContentText>

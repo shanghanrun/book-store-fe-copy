@@ -77,7 +77,10 @@ const cartStore = create((set,get)=>({
 		}
 	},
 	setBookGroup:()=>{},
-	resetBookListByCategory:()=>{}
+	resetBookListByCategory:()=>{},
+	zeroCartCount:()=>{
+		set({cartItemCount:0})
+	}
 
 }))
 

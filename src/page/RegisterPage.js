@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Grid, Button, TextField, Box, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-// import { useDispatch, useSelector } from 'react-redux';
 import userStore from '../store/userStore'
-import { userActions } from '../action/userActions';
 
 const RegisterPage = () => {
   const [userName, setUserName] = useState('');
@@ -21,9 +19,7 @@ const RegisterPage = () => {
   const [userExistsError, setUserExistsError] = useState(false);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { error, loading } = useSelector((state) => state.user);
-  const {registerUser} =userStore()
+  const { error, loading, registerUser } = userStore()
 
   useEffect(() => {
     if (error === 'User already exists') {
