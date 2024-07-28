@@ -4,17 +4,22 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import './CarouselSlide.css'; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
 
-const CarouselSlide = () => {
+const CarouselSlide = ({books}) => {
   const navigate = useNavigate();
 
-  const handleImageClick = (id, event) => {
-    event.stopPropagation();
-    navigate(`/book/${id}`);
-  };
+  // const handleImageClick = (id, event) => {
+  //   event.stopPropagation();
+  //   navigate(`/book/${id}`);
+  // };
 
   return (
     <div className="carousel-container">
-      <Carousel showArrows={false} infiniteLoop={true} showThumbs={false} showStatus={false} autoPlay={true} interval={3000}>
+      <Carousel showArrows={true} infiniteLoop={true} showThumbs={false} showStatus={true} autoPlay={true} interval={3000}>
+        {/* {books?.map((book,i)=>(
+          <div key={i} onClick={(e)=>handleImageClick(book._id, e)}>
+            <img src={book?.cover} width="100" alt={`Slide${i}`} className="carousel-image" />
+          </div>
+        ))} */}
         <div>
           <img src="/carousel/cr1.png" alt="Slide 1" className="carousel-image" />
         </div>

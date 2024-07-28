@@ -8,13 +8,12 @@ import 'react-multi-carousel/lib/styles.css';
 import './BookSlider.css';
 import CustomRightArrow from './CustomRightArrow';
 import CustomLeftArrow from './CustomLeftArrow';
-import { useDispatch, useSelector } from 'react-redux';
-import { favoriteActions } from '../../action/favoriteActions';
+import userStore from './../../store/userStore';
+import favoriteStore from './../../store/favoriteStore';
 
 const BookSlider = ({ bookList, isMobile }) => {
-  const dispatch = useDispatch();
-  const { favorite } = useSelector((state) => state.favorite);
-  const { user } = useSelector((state) => state.user);
+  const { favorite, getFavorite } = favoriteStore();
+  const { user } = userStore();
 
   const responsive = {
     superLargeDesktop: {
@@ -37,16 +36,16 @@ const BookSlider = ({ bookList, isMobile }) => {
 
   useEffect(() => {
     if (user) {
-      dispatch(favoriteActions.getFavorite());
+      getFavorite();
     }
-  }, [dispatch, user]);
+  }, [user]);
 
   return (
     <Box sx={{ height: 'auto', justifyContent: 'center' }}>
       <Carousel containerClass="carousel-container" responsive={responsive} customLeftArrow={<CustomLeftArrow />} customRightArrow={<CustomRightArrow />}>
         {bookList.map((book, index) => (
-          <Box key={index} sx={{ display: 'flex', justifyContent: 'center', padding: 2 }}>
-            <BookCard book={book} favorite={favorite.some((favorite) => favorite._id === book._id)} />
+          <Box key={index} sx={{ padding: 2 }}>
+            {favorite && (<BookCard book={book} favorite={favorite.some((fav) => fav._id === book._id)} />)}
           </Box>
         ))}
       </Carousel>

@@ -35,6 +35,8 @@ const MainPage = () => {
   const bestSeller = bookList.filter((book) => book.queryType === 'BestSeller');
   const newSpecialBooks = bookList.filter((book) => book.queryType === 'ItemNewSpecial');
   const newAllBooks = bookList.filter((book) => book.queryType === 'ItemNewSpecial');
+  // carousel에서 사용할 북리스트
+  const sampleBooks = bookList.slice(0,3)
 
   const newAllBooksCategories = getCategories(newAllBooks);
   const bestSellerCategories = getCategories(bestSeller);
@@ -45,7 +47,7 @@ const MainPage = () => {
   return (
     <Box sx={{ paddingBottom: 15 }}>
       <Box>
-        <CarouselSlide />
+        <CarouselSlide books={sampleBooks}/>
       </Box>
       <Container
         sx={{

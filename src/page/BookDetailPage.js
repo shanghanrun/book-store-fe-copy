@@ -7,30 +7,31 @@ import BookBasicInfo from '../components/BookDetailPage/BookBasicInfo';
 import BookToCart from '../components/BookDetailPage/BookToCart';
 import AddressChange from '../components/BookDetailPage/AddressChange';
 import DeliveryEstimate from '../components/BookDetailPage/DeliveryEstimate';
-import { useDispatch, useSelector } from 'react-redux';
-import { bookActions } from '../action/bookActions';
 import Info3 from '../components/BookDetailPage/Info3';
-import { favoriteActions } from '../action/favoriteActions';
+
+import userStore from '../store/userStore';
+import favoriteStore from '../store/favoriteStore';
+import bookStore from './../store/bookStore';
+import orderStore from './../store/orderStore';
 
 const BookDetailPage = () => {
-  const dispatch = useDispatch();
   const [address, setAddress] = useState('지역을 선택해주세요');
-  const { fullAddress, deliveryInfo } = useSelector((state) => state.order);
-  const { selectedBook, getBooksLoading, otherBooksByAuthor } = useSelector((state) => state.book);
+  const { fullAddress, deliveryInfo } = orderStore();
+  const { getBookDetail, selectedBook, getBooksLoading, otherBooksByAuthor } = bookStore();
   const { bookid } = useParams();
-  const { favorite } = useSelector((state) => state.favorite);
-  const { user } = useSelector((state) => state.user);
+  const { favorite, getFavorite } = favoriteStore();
+  const { user } = userStore();
   const isMobile = useMediaQuery('(max-width: 600px)');
 
   useEffect(() => {
     if (user) {
-      dispatch(favoriteActions.getFavorite());
+      getFavorite();
     }
-  }, [dispatch, user]);
+  }, [user]);
 
   useEffect(() => {
     if (bookid) {
-      dispatch(bookActions.getBookDetail(bookid));
+      getBookDetail(bookid);
     }
   }, [bookid]);
 

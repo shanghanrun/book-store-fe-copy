@@ -40,7 +40,6 @@ const userStore =create((set,get)=>({
 	loginWithEmail: async ({email,password})=>{
 		try{
 			const resp = await api.post('/auth/login', {email,password})
-			console.log('resp', resp)
 			const u = resp.data.user
 			const t = resp.data.token
 			// const credit = u.credit
@@ -51,6 +50,7 @@ const userStore =create((set,get)=>({
 				// coupon: coupon
 			})
 			sessionStorage.setItem('token',t)
+			uiStore.getState().showToastMessage("로그인 하셨습니다.", 'success')
 		} catch(e){
 			console.log('e :', e)
 			// 아래부분은 확인해 봐야 됨. e.message인지 여부...
@@ -61,6 +61,7 @@ const userStore =create((set,get)=>({
 	logout:()=> {   
 		sessionStorage.clear()
 		set({user:null})
+		uiStore.getState().showToastMessage("로그아웃", 'success')
 		// cartStore.getState().zeroCartCount()
 	},
 	loginWithGoogle: async (token)=>{

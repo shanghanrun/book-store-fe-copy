@@ -4,10 +4,10 @@ import { AddCircleOutline } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import BookSlider from '../BookSlider/BookSlider';
 
-const BooksCarousel = ({ bookList, title, categories, sx, moreButton }) => {
+const BooksCarousel = ({ bookList, title, categories, sx, isMobile, moreButton }) => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('전체');
-  const isMobile = useMediaQuery('(max-width: 600px)');
+  // const isMobile = useMediaQuery('(max-width: 600px)');
 
   const handleCategoryChange = (event, newValue) => {
     setSelectedCategory(newValue);
@@ -34,12 +34,10 @@ const BooksCarousel = ({ bookList, title, categories, sx, moreButton }) => {
         position: 'relative',
         zIndex: 1,
       }}>
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography
-          variant={isMobile ? 'h5' : 'h4'}
-          component="div"
-          gutterBottom
-          sx={{ fontWeight: 'bold', display: 'flex', justifyContent: 'left', flexGrow: 1, padding: '5px' }}>
+          variant={isMobile ? 'h5' : 'h3'}
+          sx={{ fontWeight: 'bold', padding: '5px' }}>
           {title}
         </Typography>
         {moreButton && (
@@ -47,7 +45,7 @@ const BooksCarousel = ({ bookList, title, categories, sx, moreButton }) => {
             size="large"
             endIcon={<AddCircleOutline />}
             onClick={() => onClickMore(bookGroup)}
-            sx={{ justifyContent: 'flex-end', marginLeft: isMobile ? 0 : 'auto' }}>
+            >
             더보기
           </Button>
         )}

@@ -10,6 +10,7 @@ import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer/Footer';
 import CategoryBar from '../components/CategoryBar';
 import { Box, Typography, useMediaQuery } from '@mui/material';
+import uiStore from '../store/uiStore';
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
@@ -17,6 +18,7 @@ const AppLayout = ({ children }) => {
   const {getCartQty} = cartStore()
   const { bookList, bookGroup, getBookList } = bookStore()
   console.log('bookList', bookList)
+  const {toastMessage} = uiStore()
 
   const isMobile = useMediaQuery('(max-width:600px)');
 
@@ -41,7 +43,7 @@ const AppLayout = ({ children }) => {
 
   return (
     <Box>
-      <ToastMessage />
+      <ToastMessage toastMessage={toastMessage}/>
       {!location.pathname.includes('member') && (
         <Box
           sx={{

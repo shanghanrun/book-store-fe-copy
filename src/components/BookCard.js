@@ -2,43 +2,49 @@ import React, { useEffect } from 'react';
 import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import * as types from '../constants/book.constants';
-import { useDispatch, useSelector } from 'react-redux';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import IconButton from '@mui/material/IconButton';
 import { pink } from '@mui/material/colors';
-import { favoriteActions } from '../action/favoriteActions';
-import { cartActions } from '../action/cartActions';
-import { commonUiActions } from '../action/commonUiAction';
 import { currencyFormat } from '../utils/number';
+
+import userStore from './../store/userStore';
+import favoriteStore from './../store/favoriteStore';
+import cartStore from './../store/cartStore';
+import uiStore from './../store/uiStore';
+import bookStore from './../store/bookStore';
 
 const BookCard = ({ book, favorite, sx }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
+  const { user } = userStore();
+  const {setSelectedBook} = bookStore()
+  const {addFavorite, deleteFavorite} = favoriteStore()
+  const {addToCart} = cartStore()
+  const {showToastMessage} = uiStore()
 
   const clickBookCard = (book) => {
-    dispatch({ type: types.SET_SELECTED_BOOK, payload: book });
+    setSelectedBook(book);
     navigate(`/book/${book._id}`);
   };
 
   const handleFavoriteClick = () => {
     if (user) {
-      dispatch(favoriteActions.addFavorite(book._id));
+      addFavorite(book._id);
     } else {
-      dispatch(commonUiActions.showToastMessage('로그인이 필요합니다!', 'error'));
+      showToastMessage('로그인이 필요합니다!', 'error');
     }
   };
 
   const deleteFavoriteClick = () => {
-    dispatch(favoriteActions.deleteFavorite(book._id));
+    console.log('도서찜 취소합니다.')
+    deleteFavorite(book._id);
   };
 
   const handleCartClick = () => {
     if (user) {
-      dispatch(cartActions.addToCart(book, 1, '')); // 배송 정보 추가
+      addToCart(book, 1, ''); // 배송 정보 추가
     } else {
-      dispatch(commonUiActions.showToastMessage('로그인이 필요합니다!', 'error'));
+      showToastMessage('로그인이 필요합니다!', 'error');
     }
   };
 
@@ -67,8 +73,8 @@ const BookCard = ({ book, favorite, sx }) => {
         sx={{
           height: 275,
           objectFit: 'cover',
-          borderTopLeftRadius: 12,
-          borderTopRightRadius: 12,
+          // borderTopLeftRadius: 3,
+          // borderTopRightRadius: 3,
           cursor: 'pointer',
         }}
         onClick={() => clickBookCard(book)}
@@ -110,7 +116,7 @@ const BookCard = ({ book, favorite, sx }) => {
                   <FavoriteBorderIcon fontSize="small" sx={{ color: pink[500] }} />
                 </IconButton>
               ) : (
-                <IconButton onClick={handleFavoriteClick} sx={{ padding: '5px' }}>
+                <IconButton onClick={handleFavoriteClick} sx={{ padding: '5px'}}>
                   <FavoriteBorderIcon fontSize="small" />
                 </IconButton>
               )}

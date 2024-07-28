@@ -15,7 +15,9 @@ const bookStore = create((set,get)=>({
 	otherBooksByAuthor:[],
 	loading:true,
 	error:'',
-	
+	setSelectedBook:(book)=>{
+		set({selectedBook: book})
+	},
 	createBook:async(bookForm)=>{
 		try{
 			const response = await api.post('/book', bookForm);
