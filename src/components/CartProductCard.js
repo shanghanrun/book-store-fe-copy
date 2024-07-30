@@ -1,26 +1,25 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { Box, Typography, IconButton, FormControl, Select, MenuItem, Checkbox, Divider, Hidden, useMediaQuery } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { currencyFormat } from '../utils/number';
-import { cartActions } from '../action/cartActions';
 import DeliveryEstimate from '../components/BookDetailPage/DeliveryEstimate';
 import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
+import cartStore from '../store/cartStore';
 
 const CartProductCard = ({ item, isSelected, onSelectItem, userLevel, deliveryAddress }) => {
-  const dispatch = useDispatch();
+  const {updateItemQty, deleteCartItem} = cartStore()
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const handleQtyChange = (id, value) => {
-    dispatch(cartActions.updateItemQty(id, value));
+  const handleQtyChange = (bookId, qty) => {
+    updateItemQty(bookId, qty);
   };
 
-  const handleDeleteClick = (id, qty) => {
+  const handleDeleteClick = (bookId, qty) => {
     const confirmDelete = window.confirm('선택한 상품을 삭제 하시겠습니까?');
     if (confirmDelete) {
-      dispatch(cartActions.deleteCartItem(id, qty));
+      deleteCartItem(bookId, qty);
     }
   };
 
@@ -38,16 +37,17 @@ const CartProductCard = ({ item, isSelected, onSelectItem, userLevel, deliveryAd
   };
 
   const discountRate = getDiscountRate(userLevel);
+  //! 아래처럼 book을 정의함.
   const book = item.bookId || {}; // item.bookId가 undefined일 경우 빈 객체 사용
   const originalPrice = (book.priceSales || 0) * item.qty; // book.priceSales가 undefined일 경우 0 사용
   const discountAmount = originalPrice * discountRate;
   const discountedPrice = originalPrice - discountAmount;
 
-  const CustomSelect = styled(Select)(({ theme }) => ({
-    '& .MuiSelect-icon': {
-      display: isMobile ? 'none' : 'block',
-    },
-  }));
+  // const CustomSelect = styled(Select)(({ theme }) => ({
+  //   '& .MuiSelect-icon': {
+  //     display: isMobile ? 'none' : 'block',
+  //   },
+  // }));
 
   return (
     <>
@@ -70,13 +70,27 @@ const CartProductCard = ({ item, isSelected, onSelectItem, userLevel, deliveryAd
           </Box>
         </Box>
         <FormControl variant="outlined" size="small" style={{ width: isMobile ? '10%' : '15%' }}>
-          <CustomSelect onChange={(event) => handleQtyChange(item._id, event.target.value)} value={item.qty}>
+          {/* <CustomSelect onChange={(event) => handleQtyChange(item.bookId._id, event.target.value)} value={item.qty}>
             {[...Array(10).keys()].map((x) => (
               <MenuItem key={x + 1} value={x + 1} style={{ fontSize: isMobile ? '0.8rem' : '1rem' }}>
                 {x + 1}
               </MenuItem>
             ))}
-          </CustomSelect>
+          </CustomSelect> */}
+          <Select
+              onChange={(event) => handleQtyChange(item.bookId._id, event.target.value)} value={item.qty}
+              sx={{
+                  '& .MuiSelect-icon': {
+                      display: isMobile ? 'none' : 'block',
+                  },
+              }}
+          >
+              {[...Array(10).keys()].map((x) => (
+                  <MenuItem key={x + 1} value={x + 1} style={{ fontSize: isMobile ? '0.8rem' : '1rem' }}>
+                      {x + 1}
+                  </MenuItem>
+              ))}
+          </Select>
         </FormControl>
         <Box display="flex" flexDirection="column" alignItems="center" width="15%">
           <Typography variant="body2" style={{ textDecoration: 'line-through', color: 'grey', fontSize: isMobile ? '0.8rem' : '1rem' }}>
@@ -95,7 +109,7 @@ const CartProductCard = ({ item, isSelected, onSelectItem, userLevel, deliveryAd
         <Box display="flex" flexDirection="column" alignItems="center" width="15%">
           <DeliveryEstimate address={deliveryAddress} isMobile={isMobile} /> {/* isMobile prop 추가 */}
         </Box>
-        <IconButton onClick={() => handleDeleteClick(item._id, item.qty)} color="secondary" style={{ width: '5%' }}>
+        <IconButton onClick={() => handleDeleteClick(item.bookId._id, item.qty)} color="secondary" style={{ width: '5%' }}>
           <DeleteIcon />
         </IconButton>
       </Box>

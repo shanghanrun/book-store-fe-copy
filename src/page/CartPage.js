@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   Container,
   Typography,
@@ -19,22 +18,29 @@ import {
 } from '@mui/material';
 import CartProductCard from '../components/CartProductCard';
 import OrderReceipt from '../components/OrderReceipt';
-import { cartActions } from '../action/cartActions';
+
 import theme from '../theme';
 import { Link, useNavigate } from 'react-router-dom';
 import { currencyFormat } from '../utils/number';
 import SortMenu from '../components/SortMenu';
+import userStore from './../store/userStore';
+import cartStore from '../store/cartStore';
 
 const CartPage = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { cartList, user, deliveryAddress } = useSelector((state) => state.cart);
+  const {cart, getCart, cartItemCount, zeroCart} = cartStore()
+  const {user} = userStore()
+  const deliveryAddress = user?.deliveryAddress
   const [selectedItems, setSelectedItems] = useState([]); // 선택된 상품을 상태로 관리
   const [selectedSortOption, setSelectedSortOption] = useState('카트넣기순');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // 모바일 화면 체크
 
-  const sortCartList = (list, sortOption) => {
+  useEffect(() => {
+    getCart();
+  }, [cartItemCount]);
+
+  const sortCartItems = (list, sortOption) => {
     switch (sortOption) {
       case '상품명순':
         return [...list].sort((a, b) => a.bookId.title.localeCompare(b.bookId.title));
@@ -49,15 +55,11 @@ const CartPage = () => {
     }
   };
 
-  const sortedCartList = sortCartList(cartList, selectedSortOption);
-
-  useEffect(() => {
-    dispatch(cartActions.getCartList());
-  }, [dispatch]);
+  const sortedCartItems = sortCartItems(cart.items, selectedSortOption);
 
   const handleSelectAll = (event) => {
     if (event.target.checked) {
-      setSelectedItems(cartList.map((item) => item._id)); // 전체 선택
+      setSelectedItems(cart.items.map((item) => item._id)); // 전체 선택
     } else {
       setSelectedItems([]); // 전체 선택 해제
     }
@@ -71,8 +73,8 @@ const CartPage = () => {
     setSelectedSortOption(option);
   };
 
-  const selectedCartList = cartList.filter((item) => selectedItems.includes(item._id));
-  const selectedTotalPrice = selectedCartList.reduce((total, item) => total + item.bookId.priceSales * item.qty, 0);
+  const selectedCartItems = cart?.items?.filter((item) => selectedItems.includes(item._id));
+  const selectedTotalPrice = selectedCartItems?.reduce((total, item) => total + item.bookId.priceSales * item.qty, 0);
 
   const getDiscountRate = (level) => {
     switch (level) {
@@ -104,7 +106,7 @@ const CartPage = () => {
               {' '}
               {/* 여기에서 색상을 변경 */}₩{currencyFormat(100000 - finalTotalPrice)}
             </Box>{' '}
-            더 담으면 무료 배송
+            을 더 담으면 무료 배송
           </Typography>
           <Button variant="contained" color="primary" style={{ fontSize: isMobile ? '0.7rem' : '1rem', whiteSpace: 'nowrap' }} onClick={() => navigate('/')}>
             더 담으러 가기
@@ -115,17 +117,17 @@ const CartPage = () => {
       <Typography variant="h6">10만원 이상 구매 시 무료배송 🚚</Typography>
     );
 
-  const handleCheckout = () => {
+  const handleCheckout = () => {  //주문하기 이다.
     navigate('/payment', {
       state: {
-        selectedCartList,
+        selectedCartItems,
         finalTotalPrice,
         discountAmount,
         discountRate,
         shippingFee,
         pointsEarned,
         grandTotal,
-        deliveryAddress,
+        deliveryAddress
       },
     });
   };
@@ -184,7 +186,7 @@ const CartPage = () => {
               sx={{ overflowX: 'auto' }} // 가로 스크롤 적용
             >
               <FormControlLabel
-                control={<Checkbox checked={selectedItems.length === cartList.length} onChange={handleSelectAll} color="primary" />}
+                control={<Checkbox checked={selectedItems.length === cart.items.length} onChange={handleSelectAll} color="primary" />}
                 label={<Typography style={{ fontSize: isMobile ? '0.7rem' : '1rem' }}>전체 선택</Typography>}
               />
               <Typography style={{ fontSize: isMobile ? '0.7rem' : '1rem' }}>상품 정보</Typography>
@@ -193,8 +195,8 @@ const CartPage = () => {
               <Typography style={{ fontSize: isMobile ? '0.7rem' : '1rem', whiteSpace: 'nowrap' }}>배송 정보</Typography>
               <Typography style={{ fontSize: isMobile ? '0.7rem' : '1rem' }}>삭제</Typography>
             </Box>
-            {sortedCartList.length > 0 ? (
-              sortedCartList.map((item) => (
+            {sortedCartItems.length > 0 ? (
+              sortedCartItems.map((item) => (
                 <CartProductCard
                   item={item}
                   key={item._id}
@@ -215,7 +217,7 @@ const CartPage = () => {
               </Box>
             )}
 
-            {selectedCartList.length > 0 && ( // 모바일이 아닐 때만 테이블 표시
+            {selectedCartItems.length > 0 && ( // 모바일이 아닐 때만 테이블 표시
               <Box sx={{ mt: 4, ml: 4, flex: 1 }}>
                 <TableContainer component={Paper} sx={{ bgcolor: '#f5f5f5', borderRadius: '10px' }}>
                   <Table>
@@ -269,7 +271,7 @@ const CartPage = () => {
           {!isMobile && ( // 모바일이 아닐 때 OrderReceipt를 테이블 옆에 표시
             <Box ml={4} flex={1}>
               <OrderReceipt
-                cartList={selectedCartList}
+                cartItems={selectedCartItems}
                 finalTotalPrice={finalTotalPrice}
                 hasSelectedItems={selectedItems.length > 0}
                 handleCheckout={handleCheckout}
@@ -281,9 +283,9 @@ const CartPage = () => {
         {isMobile && ( // 모바일일 때 OrderReceipt를 테이블 아래로 이동
           <Box mt={4}>
             <OrderReceipt
-              cartList={selectedCartList}
+              cartItems={selectedCartItems}
               finalTotalPrice={finalTotalPrice}
-              hasSelectedItems={selectedItems.length > 0}
+              hasSelectedItems={selectedCartItems?.length > 0}
               handleCheckout={handleCheckout}
               sticky={true} // Sticky prop 추가
             />

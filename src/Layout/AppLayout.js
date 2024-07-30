@@ -15,7 +15,7 @@ import uiStore from '../store/uiStore';
 const AppLayout = ({ children }) => {
   const location = useLocation();
   const {user, loginWithToken} = userStore();
-  const {getCartQty} = cartStore()
+  const {getCart} = cartStore()
   const { bookList, bookGroup, getBookList } = bookStore()
   console.log('bookList', bookList)
   const {toastMessage} = uiStore()
@@ -29,7 +29,8 @@ const AppLayout = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      getCartQty();
+      // getCartQty();
+      getCart(); // 이걸 하면 알아서 cartItemCount도 얻어진다.
     }
   }, [user]);
 

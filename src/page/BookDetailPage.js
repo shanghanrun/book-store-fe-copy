@@ -44,8 +44,7 @@ const BookDetailPage = () => {
   }
 
   return (
-    <Box sx={{ mt: { xs: 8, md: 16 } }}>
-      <Container sx={{ mb: 4 }}>
+    <Container sx={{ mt: { xs: 8, md: 16 }, mb:4 }}>
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
             {selectedBook.cover && <BookImage cover={selectedBook.cover} />}
@@ -99,8 +98,7 @@ const BookDetailPage = () => {
             </IconButton>
           </Box>
         )}
-      </Container>
-    </Box>
+    </Container>
   );
 };
 

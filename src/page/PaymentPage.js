@@ -25,33 +25,38 @@ import {
   useTheme,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import { currencyFormat, cc_expires_format } from '../utils/number';
-import { orderActions } from '../action/orderActions';
+
+import userStore from '../store/userStore';
+import cartStore from '../store/cartStore';
+import orderStore from './../store/orderStore';
 import DeliveryEstimate from '../components/BookDetailPage/DeliveryEstimate';
 import OrderReceipt from '../components/OrderReceipt';
+
 const PaymentPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedCartList, finalTotalPrice, shippingFee, discountRate, grandTotal } = location.state || {
-    selectedCartList: [],
+  const { selectedCartItems, finalTotalPrice, shippingFee, discountRate, grandTotal } = location.state || {
+    selectedCartItems: [],
     finalTotalPrice: 0,
     shippingFee: 0,
     discountRate: 0,
     grandTotal: 0,
   };
-  const { user, cartList, deliveryAddress } = useSelector((state) => state.cart);
-  const { orderList } = useSelector((state) => state.order);
-  const dispatch = useDispatch();
+  const {user} = userStore()
+  const { cartItemCount } = cartStore();
+  const deliveryAddress = user?.deliveryAddress
+  const { orderList } = orderStore();
   const [errors, setErrors] = useState({});
   const [showAllItems, setShowAllItems] = useState(false);
+
   useEffect(() => {
     console.log('user:', user);
     console.log('orderList', orderList);
-    console.log('selectedCartList', selectedCartList);
-  }, [user, orderList, selectedCartList]);
+    console.log('selectedCartItems', selectedCartItems);
+  }, [user, orderList, selectedCartItems]);
   const [shippingMethod, setShippingMethod] = useState('general');
   const [shippingInfo, setShippingInfo] = useState({
     name: '',
@@ -105,7 +110,7 @@ const PaymentPage = () => {
   const handleBackToCart = () => {
     navigate('/cart');
   };
-  if (cartList.length === 0) {
+  if (cartItemCount === 0) {
     navigate('/cart');
   }
   const handlePostcode = () => {
@@ -169,7 +174,7 @@ const PaymentPage = () => {
   const toggleShowAllItems = () => {
     setShowAllItems(!showAllItems);
   };
-  const itemsToShow = showAllItems ? selectedCartList : selectedCartList.slice(0, 1);
+  const itemsToShow = showAllItems ? selectedCartItems : selectedCartItems.slice(0, 1);
   return (
     <Container>
       <Box display="flex" justifyContent="flex-end" alignItems="center" mb={2} mt={5}>
@@ -188,11 +193,11 @@ const PaymentPage = () => {
                       <Typography variant="h4" sx={{ fontWeight: 500, fontSize: isMobile ? '0.8rem' : '1.5rem' }}>
                         주문상품 총{' '}
                         <Box component="span" color="#608020" fontWeight="bold">
-                          {selectedCartList.length}
+                          {selectedCartItems.length}
                         </Box>
                         개
                       </Typography>
-                      {selectedCartList.length > 1 && (
+                      {selectedCartItems.length > 1 && (
                         <Button variant="outlined" onClick={toggleShowAllItems}>
                           {showAllItems ? '간단히 보기' : '더보기'}
                         </Button>
@@ -380,8 +385,8 @@ const PaymentPage = () => {
         <Grid item xs={12} md={4}>
           <OrderReceipt
             finalTotalPrice={finalTotalPrice}
-            hasSelectedItems={selectedCartList.length > 0}
-            cartList={selectedCartList}
+            hasSelectedItems={selectedCartItems.length > 0}
+            cartItems={selectedCartItems}
             shippingInfo={shippingInfo}
             cardInfo={cardInfo}
             sticky={true}

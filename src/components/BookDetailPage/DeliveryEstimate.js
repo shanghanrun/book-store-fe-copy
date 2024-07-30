@@ -9,7 +9,7 @@ const DeliveryEstimate = ({ address, isMobile }) => {
   let deliveryStyle = {};
 
   if (regionsFast.some((region) => address.includes(region))) {
-    deliveryText = '하루 배송 - 24시까지 주문하면 내일 도착 예정';
+    deliveryText = isMobile? '하루배송': '하루 배송 - 24시까지 주문하면 내일 도착 예정';
     deliveryStyle = { color: 'red' };
   } else if (regionsRegular.some((region) => address.includes(region))) {
     deliveryText = '일반 배송 - 오늘 출고 예정';

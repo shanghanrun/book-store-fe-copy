@@ -42,7 +42,7 @@ const BookCard = ({ book, favorite, sx }) => {
 
   const handleCartClick = () => {
     if (user) {
-      addToCart(book, 1, ''); // 배송 정보 추가
+      addToCart(book._id); // 배송 정보 추가??
     } else {
       showToastMessage('로그인이 필요합니다!', 'error');
     }

@@ -62,7 +62,7 @@ const userStore =create((set,get)=>({
 		sessionStorage.clear()
 		set({user:null})
 		uiStore.getState().showToastMessage("로그아웃", 'success')
-		// cartStore.getState().zeroCartCount()
+		cartStore.getState().zeroCartItemCount()
 	},
 	loginWithGoogle: async (token)=>{
 		try{

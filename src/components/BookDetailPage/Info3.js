@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { TableContainer, TableBody, Table, TableRow, TableCell, Paper, Container, Tabs, Tab, Box, Typography } from '@mui/material';
-import { commentActions } from '../../action/commentAction';
-import { useDispatch, useSelector } from 'react-redux';
 import './Info3.css';
 import DeliveryPolicy from './DeliveryPolicy';
 import CommentSection from './CommentSection';
 import AuthorSection from './AuthorBooksSection';
 import BookCard from '../BookCard';
+
+import userStore from './../../store/userStore';
+import commentStore from './../../store/commentStore';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -24,19 +25,16 @@ const scrollToElement = (elementId, offset = 0) => {
 };
 
 const Info3 = ({ selectedBook, otherBooksByAuthor }) => {
-  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('bookDescription');
-  const { user } = useSelector((state) => state.user);
-  const { comments, createCommentSuccess, deleteCommentSuccess } = useSelector((state) => state.comment);
+  const { comments, getCommentsByBook, deleteComment, commentsUpdated } = commentStore();
+  const {user} = userStore()
   const navigate = useNavigate();
   const query = useQuery();
   const section = query.get('section');
 
   useEffect(() => {
-    if (createCommentSuccess || deleteCommentSuccess) {
-      dispatch(commentActions.getCommentsByBook(selectedBook._id));
-    }
-  }, [createCommentSuccess, dispatch, deleteCommentSuccess]);
+    getCommentsByBook(selectedBook._id);
+  }, [commentsUpdated]);
 
   useEffect(() => {
     if (section && section !== activeTab) {
@@ -53,12 +51,12 @@ const Info3 = ({ selectedBook, otherBooksByAuthor }) => {
     }
   };
 
-  useEffect(() => {
-    dispatch(commentActions.getCommentsByBook(selectedBook._id));
-  }, []);
+  // useEffect(() => {
+  //   getCommentsByBook(selectedBook._id);
+  // }, []);
 
-  const deleteComment = (commentId) => {
-    dispatch(commentActions.deleteComment(commentId, selectedBook._id));
+  const removeComment = (commentId) => {
+    deleteComment(commentId, selectedBook._id);
   };
 
   useEffect(() => {
@@ -91,11 +89,12 @@ const Info3 = ({ selectedBook, otherBooksByAuthor }) => {
       <Tabs
         value={activeTab}
         onChange={handleTabChange}
-        centered
+        // centered 는 variant="scrollable"과 양립할 수 없다.
+        // 이것은 탭을 중앙에 배치하려는 것.
         indicatorColor="primary"
         textColor="primary"
         scrollbuttons="auto"
-        variant="scrollable"
+        variant="scrollable" // 탭이 많은 경우 스크롤이 가능하게
         allowScrollButtonsMobile
         sx={{ backgroundColor: '#DADFCE', opacity: '90%', position: 'sticky', top: '0', ml: '0', width: '100%', zIndex: 1000 }}>
         <Tab label="도서소개" value="bookDescription" />
@@ -141,7 +140,7 @@ const Info3 = ({ selectedBook, otherBooksByAuthor }) => {
 
       <Box id="reviews" my={4}>
         <Typography variant="h4">리뷰</Typography>
-        <CommentSection comments={comments} bookId={selectedBook._id} deleteComment={deleteComment} user={user} />
+        <CommentSection comments={comments} bookId={selectedBook._id} deleteComment={removeComment} user={user} />
       </Box>
 
       <Box id="delivery" my={4}>

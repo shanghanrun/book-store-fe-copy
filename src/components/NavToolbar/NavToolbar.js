@@ -1,20 +1,13 @@
 import Box from '@mui/material/Box';
-// import { bookActions } from '../../action/bookActions';
-// import { categoryActions } from '../../action/categoryActions';
 import SearchBook from '../SearchBook';
 import { IconButton, Menu, useMediaQuery, useTheme, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Badge } from '@mui/material';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
-
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-
 import React, { useState } from 'react';
-
-// import { userActions } from '../../action/userActions';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-// import { useDispatch, useSelector } from 'react-redux';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 import cartStore from './../../store/cartStore';
@@ -32,7 +25,7 @@ const NavToolbar = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
 
-  // const dispatch = useDispatch();
+ 
   const navigate = useNavigate();
   const {user, logout} = userStore()
   const {cartItemCount} = cartStore()
@@ -160,7 +153,7 @@ const NavToolbar = () => {
           minWidth: '130px',
         }}
         onClick={handleCartClick}>
-        {CART} ({cartItemCount || 0})
+        {CART} ({cartItemCount || '0'})
       </Button>
       {user && user.role === 'admin' && (
         <Button

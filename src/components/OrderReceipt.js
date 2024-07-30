@@ -2,14 +2,15 @@ import React, { useEffect } from 'react';
 import { Box, Typography, Paper, Divider, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { currencyFormat } from '../utils/number';
-import { useDispatch } from 'react-redux';
-import { orderActions } from '../action/orderActions';
-import { cartActions } from '../action/cartActions';
 import paymentIcon from '../assets/payment_icon_yellow_large.png';
-const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartList, handleCheckout, sticky, shippingInfo = {}, cardInfo = {}, errors, setErrors }) => {
+import orderStore from './../store/orderStore';
+import cartStore from '../store/cartStore';
+
+const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartItems, handleCheckout, sticky, shippingInfo = {}, cardInfo = {}, errors, setErrors }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const {getCart} = cartStore()
+  const {createOrder} = orderStore()
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   const shippingFee = hasSelectedItems ? (finalTotalPrice > 100000 ? 0 : 2500) : 0;
@@ -53,9 +54,9 @@ const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartList, handleCheck
       totalPrice: grandTotal,
       shipTo: { zipCode, address1, address2 },
       contact: { name, phone, email },
-      orderList: cartList.map((item) => {
+      orderList: cartItems.map((item) => {
         return {
-          bookId: item.bookId,
+          bookId: item.bookId._id,
           qty: item.qty,
           price: item.bookId.priceSales,
         };
@@ -63,8 +64,8 @@ const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartList, handleCheck
     };
 
     try {
-      const response = await dispatch(orderActions.createOrder(data));
-      await dispatch(cartActions.getCartQty());
+      const response = await createOrder(data);
+      await getCart();
       navigate('/payment/success', {
         state: {
           shippingInfo,
@@ -111,17 +112,17 @@ const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartList, handleCheck
             totalPrice: grandTotal,
             shipTo: { zipCode, address1, address2 },
             contact: { name, phone, email },
-            orderList: cartList.map((item) => {
+            orderList: cartItems.map((item) => {
               return {
-                bookId: item.bookId,
+                bookId: item.bookId._id,
                 qty: item.qty,
                 price: item.bookId.priceSales,
               };
             }),
           };
           try {
-            const response = await dispatch(orderActions.createOrder(data));
-            await dispatch(cartActions.getCartQty());
+            const response = await createOrder(data);
+            await getCart();
             navigate('/payment/success', {
               state: {
                 shippingInfo,
@@ -181,7 +182,7 @@ const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartList, handleCheck
             <Typography variant="h6">₩{currencyFormat(grandTotal)}</Typography>
           </Box>
 
-          {location.pathname.includes('/cart') && cartList.length > 0 && (
+          {location.pathname.includes('/cart') && cartItems.length > 0 && (
             <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} onClick={handleCheckout}>
               주문하기
             </Button>

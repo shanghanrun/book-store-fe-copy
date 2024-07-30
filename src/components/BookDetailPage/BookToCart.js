@@ -3,35 +3,36 @@ import { Button, Box } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { pink } from '@mui/material/colors';
-import { useDispatch, useSelector } from 'react-redux';
-import { favoriteActions } from '../../action/favoriteActions';
-import { cartActions } from '../../action/cartActions';
-import { commonUiActions } from '../../action/commonUiAction';
+
+import cartStore from '../../store/cartStore';
+import uiStore from './../../store/uiStore';
+import favoriteStore from './../../store/favoriteStore';
 
 const BookToCart = ({ favorite, selectedBook, fullAddress, deliveryInfo, deliveryAddress, user }) => {
-  const dispatch = useDispatch();
-  const { quantity } = useSelector((state) => state.cart);
+  const { addToCart } = cartStore();
+  const { addFavorite, deleteFavorite} = favoriteStore()
+  const {showToastMessage} = uiStore()
 
   const handleAddToCart = () => {
     if (user) {
-      dispatch(cartActions.addToCart(selectedBook, quantity, deliveryAddress)); // 배송 정보 추가
+      addToCart(selectedBook._id); // 배송 정보 추가??
     } else {
-      dispatch(commonUiActions.showToastMessage('로그인이 필요합니다!', 'error'));
+      showToastMessage('로그인이 필요합니다!', 'error');
     }
   };
 
   const handleFavoriteClick = () => {
     if (user) {
-      dispatch(favoriteActions.addFavorite(selectedBook._id));
+      addFavorite(selectedBook._id);
     } else {
-      dispatch(commonUiActions.showToastMessage('로그인이 필요합니다!', 'error'));
+      showToastMessage('로그인이 필요합니다!', 'error');
     }
   };
   const deleteFavoriteClick = () => {
     if (user) {
-      dispatch(favoriteActions.deleteFavorite(selectedBook._id));
+      deleteFavorite(selectedBook._id);
     } else {
-      dispatch(commonUiActions.showToastMessage('로그인이 필요합니다!', 'error'));
+      showToastMessage('로그인이 필요합니다!', 'error');
     }
   };
 
