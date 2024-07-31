@@ -16,7 +16,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { currencyFormat } from '../utils/number';
-import { useSelector } from 'react-redux';
+import orderStore from '../store/orderStore';
 import { styled } from '@mui/material/styles';
 import { tableCellClasses } from '@mui/material/TableCell';
 
@@ -38,7 +38,7 @@ const cellStyle = {
 };
 
 const MyPageOrderDialog = ({ open, handleClose }) => {
-  const { selectedOrder } = useSelector((state) => state.order);
+  const { selectedOrder } = orderStore();
 
   return (
     <Dialog open={open} onClose={handleClose}>

@@ -1,20 +1,25 @@
 import {create} from 'zustand'
 import uiStore from './uiStore'
+import api from '../utils/api';
 
 const orderStore = create((set,get)=>({
 	orderList: [],
 	myOrderList: [],
 	selectedOrder: null,
-	fullAddress: '',
-	deliveryInfo: '',
 	orderNum: '',
 	requestList: [],
 	myRequestList: [],
 	selectedRequest: null,
+	setSelectedOrder:(order)=>{set({selectedOrder: order})},
 	createOrder:async(payload)=>{
+		console.log('createOrder 실행됨')
 		try{
 			const resp = await api.post('/order', payload)
-			set({orderNum:resp.data.orderNum})
+			console.log('resp :', resp)
+			set({
+				myOrderList:[...get().myOrderList, resp.data.newOrder],
+				orderNum:resp.data.orderNum
+			})
 		}catch(e){
 			console.log(e)
 		}
@@ -23,16 +28,16 @@ const orderStore = create((set,get)=>({
 	getMyOrder:async(query)=>{
 		try{
 			const resp = await api.get('/order/me', {params:{...query}})
-			set({myOrderList: resp.data})
+			set({myOrderList: resp.data.orders})
 		}catch(e){
 			console.log(e)
 		}
 	},
-	// 모든 주문 조회
+	// 쿼리를 바탕으로 모든 주문 조회 (query에 userName 들어간다.)
 	getOrderList:async(query)=>{
 		try{
 			const resp = await api.get('/order',{params:{...query}})
-			set({orderList: resp.data})
+			set({orderList: resp.data.orders})
 		}catch(e){
 			console.log(e)
 		}
@@ -51,7 +56,7 @@ const orderStore = create((set,get)=>({
 	requestOrder:async(orderNum,requestType,reason,navigate)=>{
 		try{
 			const resp = await api.post('/order/request', {orderNum,requestType, reason})
-			set({requestList: resp.data})
+			set({requestList: resp.data.order})
 			uiStore.getState().showToastMessage('상품문의를 완료했습니다.', 'success')
 			navigate('/mypage/order-claim-list')
 		}catch(e){
@@ -62,7 +67,7 @@ const orderStore = create((set,get)=>({
 	getRequestList:async(query)=>{
 		try{
 			const resp = await api.get('/order/request', {params:{...query}})
-			set({requestList: resp.data})
+			set({myRequestList: resp.data.requests})
 		}catch(e){
 			console.log(e)
 		}
@@ -71,7 +76,7 @@ const orderStore = create((set,get)=>({
 	getMyRequest: async()=>{
 		try{
 			const resp = await api.get('/order/request/me')
-			set({myRequestList:resp.data})
+			set({myRequestList:resp.data.requests})
 		}catch(e){
 			console.log(e)
 		}

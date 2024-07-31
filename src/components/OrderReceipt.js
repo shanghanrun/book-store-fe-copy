@@ -54,7 +54,7 @@ const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartItems, handleChec
       totalPrice: grandTotal,
       shipTo: { zipCode, address1, address2 },
       contact: { name, phone, email },
-      orderList: cartItems.map((item) => {
+      orderItems: cartItems.map((item) => {
         return {
           bookId: item.bookId._id,
           qty: item.qty,
@@ -62,11 +62,16 @@ const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartItems, handleChec
         };
       }),
     };
-
     try {
-      const response = await createOrder(data);
-      await getCart();
-      navigate('/payment/success', {
+      
+      // const response = await createOrder(data);
+      await createOrder(data)
+      // createOrder는 자체적으로 return이 없다.
+      
+      // await getCart(); 이것은 필요 없을 것 같다.
+      // 차라리 cart를 비워야 될 것 같다.. 나중에 추가
+
+      navigate('/payment/success', { //OrderCompletePage
         state: {
           shippingInfo,
           grandTotal,

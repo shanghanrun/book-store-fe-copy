@@ -32,6 +32,7 @@ const DateFilterCondition = ({ startDate, setStartDate, endDate, setEndDate }) =
         start = null;
         end = null;
     }
+    // 위에서 start와 end가 설정되면, 추가로 시간설정
     if (start) {
       start.setHours(0, 0, 0, 0);
     }

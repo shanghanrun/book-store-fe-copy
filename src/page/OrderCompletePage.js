@@ -3,11 +3,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Container, Typography, Box, Button, Divider, Grid } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import orderStore from '../store/orderStore';
 
 const OrderCompletePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { orderNum } = useSelector((state) => state.order);
+  const { orderNum } = orderStore();
   const { shippingInfo, grandTotal, paymentMethod } = location.state || {
     shippingInfo: {},
     grandTotal: 0,
@@ -15,7 +16,7 @@ const OrderCompletePage = () => {
   };
 
   useEffect(() => {
-    if (!orderNum) {
+    if (!orderNum) {  //주문이 없으면 홈으로
       navigate('/');
     }
   }, [orderNum, navigate]);

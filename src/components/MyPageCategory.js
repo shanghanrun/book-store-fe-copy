@@ -28,6 +28,8 @@ const MyPageCategory = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [anchorElShop, setAnchorElShop] = useState(null);
   const [anchorElInfo, setAnchorElInfo] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
   const isMobile = useMediaQuery('(max-width:600px');
 
   useEffect(() => {
@@ -60,21 +62,19 @@ const MyPageCategory = () => {
     setAnchorElInfo(null);
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
 
   const myShoppingList = [
-    { list: '주문내역/배송조회', link: '/mypage/order-list' },
-    { list: '반품/교환 신청 및 조회', link: '/mypage/order-claim-list' },
-    { list: '취소 주문 내역', link: '/mypage/order-cancel-list' },
-    { list: '리뷰 관리', link: '/mypage/my-review' },
-    { list: '찜한 도서', link: '/mypage/wishlist' },
+    { title: '주문내역/배송조회', link: '/mypage/order-title' },
+    { title: '반품/교환 신청 및 조회', link: '/mypage/order-claim-list' },
+    { title: '취소 주문 내역', link: '/mypage/order-cancel-list' },
+    { title: '리뷰 관리', link: '/mypage/my-review' },
+    { title: '찜한 도서', link: '/mypage/wishlist' },
   ];
 
   const myInfoList = [
-    { list: '개인정보 수정', link: '/member/confirm-password' },
-    { list: '이벤트 당첨 내역', action: handleEventClick },
-    { list: '회원 탈퇴', link: '/member/account-deletion' },
+    { title: '개인정보 수정', link: '/member/confirm-password' },
+    { title: '이벤트 당첨 내역', action: handleEventClick },
+    { title: '회원 탈퇴', link: '/member/account-deletion' },
   ];
 
   return (
@@ -108,7 +108,7 @@ const MyPageCategory = () => {
                     onClose={handleShopMenuClose}>
                     {myShoppingList.map((item, index) => (
                       <MenuItem key={index} onClick={() => navigate(item.link)}>
-                        {item.list}
+                        {item.title}
                       </MenuItem>
                     ))}
                   </Menu>
@@ -139,7 +139,7 @@ const MyPageCategory = () => {
                     onClose={handleInfoMenuClose}>
                     {myInfoList.map((item, index) => (
                       <MenuItem key={index} onClick={item.link ? () => navigate(item.link) : item.action}>
-                        {item.list}
+                        {item.title}
                       </MenuItem>
                     ))}
                     <MenuItem onClick={() => navigate('/contact')}>1:1 문의</MenuItem>
@@ -169,8 +169,7 @@ const MyPageCategory = () => {
             <Box mt={2} p={2} border={1} borderRadius={4} borderColor="grey.400">
               <Typography variant="h6">나의 북두칠성 등급</Typography>
               <Box display="flex" mt={2}>
-                {userLevel.length > 0
-                  ? userLevel?.map((level, index) => (
+                { userLevel.map((level, index) => (
                       <Box
                         key={index}
                         mr={1.5}
@@ -179,49 +178,47 @@ const MyPageCategory = () => {
                           height: 45,
                           borderRadius: '50%',
                           display: 'flex',
-                          flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'center',
                           bgcolor: user?.level === level ? '#3d643d' : '#f0f0f0',
                         }}>
-                        <Typography variant="subtitle2" color="white">
-                          {level}
-                        </Typography>
+                          <Typography variant="subtitle2" color="white">
+                            {level}
+                          </Typography>
                       </Box>
-                    ))
-                  : 'null'}
+                    ))}
               </Box>
             </Box>
           </Grid>
 
-          {/* 나의 쇼핑 */}
+          {/* 나의 쇼핑과 나의 정보 */}
           <Grid container>
             <Box mt={2} p={2} pl={3} pr={9} border={1} borderRadius={4} borderColor="grey.400">
+              {/* 나의 쇼핑 */}
               <Typography color="primary">나의 쇼핑</Typography>
               <Box>
                 {myShoppingList?.map((item, index) => (
                   <Box key={index} m={1} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     <Link href={item.link} underline="hover" color="inherit">
-                      {item.list}
+                      {item.title}
                     </Link>
                   </Box>
                 ))}
               </Box>
-              {/* </Box> */}
+
               <Typography mt={2} mb={2} borderBottom={1} borderColor="grey.400" />
               {/* 나의 정보 */}
-              {/* <Box mt={4} p={2} border={1} borderRadius={4} borderColor="grey.400"> */}
               <Typography color="primary">나의 정보</Typography>
               <Box mb={2}>
                 {myInfoList?.map((item, index) => (
                   <Box m={1} key={index}>
                     {item.link ? (   // link인 경우
                       <Link href={item.link} underline="hover" color="inherit">
-                        {item.list}
+                        {item.title}
                       </Link>
                     ) : (     // action인 경우
                       <Typography variant="body1" color="inherit" sx={{ cursor: 'pointer' }} onClick={item.action}>
-                        {item.list}
+                        {item.title}
                       </Typography>
                     )}
                   </Box>

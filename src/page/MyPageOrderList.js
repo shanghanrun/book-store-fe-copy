@@ -25,17 +25,19 @@ import MyPageCategory from '../components/MyPageCategory';
 import MyPageOrderDialog from '../components/MyPageOrderDialog';
 import { format, isValid, startOfDay, endOfDay } from 'date-fns';
 import DateFilterCondition from '../components/DateFilterCondition';
-import { useDispatch, useSelector } from 'react-redux';
-import { orderActions } from '../action/orderActions';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { orderActions } from '../action/orderActions';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as types from '../constants/order.constants';
 import { currencyFormat } from '../utils/number';
+import userStore from './../store/userStore';
+import orderStore from '../store/orderStore';
 
 const MyPageOrderList = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.user);
-  const { orderList } = useSelector((state) => state.order);
+  const { user } = userStore();
+  const { myOrderList, getMyOrder, orderList, getOrderList, setSelectedOrder, selectedOrder } = orderStore();
   const [recentChecked, setRecentChecked] = useState(false);
   const [oldChecked, setOldChecked] = useState(false);
   const [sortOrder, setSortOrder] = useState('recent');
@@ -49,14 +51,14 @@ const MyPageOrderList = () => {
   const [sortedOrderList, setSortedOrderList] = useState([]);
 
   useEffect(() => {
-    dispatch(orderActions.getMyOrder());
-  }, [user, dispatch]);
+    getMyOrder();
+  }, [user]);
 
   useEffect(() => {
     if (searchQuery.orderNum === '') delete searchQuery.orderNum;
     const params = new URLSearchParams(searchQuery);
     navigate('?' + params.toString());
-    dispatch(orderActions.getOrderList({ ...searchQuery }));
+    getOrderList({ ...searchQuery });
   }, [searchQuery]);
 
   useEffect(() => {
@@ -115,7 +117,7 @@ const MyPageOrderList = () => {
   // 주문 상세 다이얼로그 열기
   const handleOpenDialog = (order) => {
     setDialogOpen(true);
-    dispatch({ type: types.SET_SELECTED_ORDER, payload: order });
+    setSelectedOrder(order);
   };
 
   // 주문 상세 다이얼로그 닫기
@@ -170,7 +172,7 @@ const MyPageOrderList = () => {
                   borderColor="primary.light"
                   bgcolor="primary.light"
                   color="white"
-                  sx={{ fontSize: isMobile ? '0.8rem' : '1.3rem', p: '3px' }}>
+                  sx={{ fontSize: '0.8rem', p: '3px' }}>
                   {user?.level}
                 </Typography>
               </Box>
@@ -304,7 +306,7 @@ const MyPageOrderList = () => {
                               ?.map((item) => item.bookId?.title)
                               .join(', ')
                               .slice(0, 25)}
-                            {item?.items?.map((item) => item.bookId?.title).join(', ').length > 25 ? '...' : ''}
+                            {/* {item?.items?.map((item) => item.bookId?.title).join(', ').length > 25 ? '...' : ''} */}
                           </TableCell>
                           <TableCell style={cellStyle}>{currencyFormat(item.totalPrice)}</TableCell>
                           <TableCell style={cellStyle}>{item.status}</TableCell>

@@ -47,10 +47,15 @@ const PaymentPage = () => {
   };
   const {user} = userStore()
   const { cartItemCount } = cartStore();
+  if (cartItemCount === 0) { // cart가 비었다면 할 것도 없이 cart로 이동
+    navigate('/cart');
+  }
+
   const deliveryAddress = user?.deliveryAddress
   const { orderList } = orderStore();
   const [errors, setErrors] = useState({});
   const [showAllItems, setShowAllItems] = useState(false);
+
 
   useEffect(() => {
     console.log('user:', user);
@@ -110,9 +115,7 @@ const PaymentPage = () => {
   const handleBackToCart = () => {
     navigate('/cart');
   };
-  if (cartItemCount === 0) {
-    navigate('/cart');
-  }
+  
   const handlePostcode = () => {
     const script = document.createElement('script');
     script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
@@ -134,6 +137,7 @@ const PaymentPage = () => {
     };
     document.body.appendChild(script);
   };
+
   const handleShippingMethodChange = (e) => {
     const { value } = e.target;
     setShippingMethod(value);
@@ -175,6 +179,7 @@ const PaymentPage = () => {
     setShowAllItems(!showAllItems);
   };
   const itemsToShow = showAllItems ? selectedCartItems : selectedCartItems.slice(0, 1);
+  
   return (
     <Container>
       <Box display="flex" justifyContent="flex-end" alignItems="center" mb={2} mt={5}>
