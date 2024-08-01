@@ -17,10 +17,9 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { currencyFormat } from '../utils/number';
-import { useDispatch, useSelector } from 'react-redux';
-import { orderActions } from '../action/orderActions';
 import { styled } from '@mui/material/styles';
 import { tableCellClasses } from '@mui/material/TableCell';
+import orderStore from '../store/orderStore';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,27 +32,25 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const MyPageClaimDialog = ({ open, handleClose }) => {
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
-  const { selectedRequest } = useSelector((state) => state.order);
-  const { myOrderList } = useSelector((state) => state.order);
-  const [bookTitle, setBookTitle] = useState(null);
+  const { selectedRequest } = orderStore();
+  console.log('selectedRequest', selectedRequest)
+  // const [bookTitle, setBookTitle] = useState(null);
 
-  useEffect(() => {
-    dispatch(orderActions.getMyOrder());
-  }, [user, dispatch]);
+  // useEffect(() => {
+  //   getMyOrder();
+  // }, [user]);
 
-  useEffect(() => {
-    if (selectedRequest && myOrderList) {
-      const order = myOrderList.find((order) => order._id === selectedRequest._id);
-      if (order) {
-        order.items.forEach((item) => {
-          const BookTitle = item.bookId.title;
-          setBookTitle(BookTitle);
-        });
-      }
-    }
-  }, [selectedRequest, myOrderList]);
+  // useEffect(() => {
+  //   if (selectedRequest && myOrderList) {
+  //     const order = myOrderList.find((order) => order._id === selectedRequest._id);
+  //     if (order) {
+  //       order.items.forEach((item) => {
+  //         const BookTitle = item.bookId.title;
+  //         setBookTitle(BookTitle);
+  //       });
+  //     }
+  //   }
+  // }, [selectedRequest, myOrderList]);
 
   const cellStyle = {
     whiteSpace: 'nowrap',
@@ -135,9 +132,9 @@ const MyPageClaimDialog = ({ open, handleClose }) => {
 
             <TableBody>
               {selectedRequest?.items?.length > 0 &&
-                selectedRequest?.items?.map((item) => (
-                  <TableRow key={selectedRequest._id}>
-                    <TableCell style={cellStyle}>{bookTitle}</TableCell>
+                selectedRequest?.items?.map((item,i) => (
+                  <TableRow key={i}>
+                    <TableCell style={cellStyle}>{item?.bookId.title}</TableCell>
                     <TableCell style={cellStyle}>{currencyFormat(item?.price)}</TableCell>
                     <TableCell style={cellStyle}>{item?.qty}</TableCell>
                     <TableCell style={cellStyle}>{currencyFormat(item?.price * item?.qty)}</TableCell>

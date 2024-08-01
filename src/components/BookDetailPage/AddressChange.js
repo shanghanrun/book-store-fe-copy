@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { SET_FULL_ADDRESS } from '../../constants/order.constants';
-
+import orderStore from '../../store/orderStore';
 import styled from 'styled-components';
 
 // Styled component for the dropdown container
@@ -21,7 +19,7 @@ const PostcodeWidget = styled.div`
 const AddressChange = ({ setAddress }) => {
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const elementRef = useRef(null);
-  const dispatch = useDispatch();
+  const {setFullAddress} = orderStore()
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -49,7 +47,7 @@ const AddressChange = ({ setAddress }) => {
               fullAddress += extraAddress;
             }
             setAddress(fullAddress);
-            dispatch({ type: SET_FULL_ADDRESS, fullAddress });
+            setFullAddress(fullAddress);
             togglePostcode();
           },
           width: '100%',
@@ -59,7 +57,7 @@ const AddressChange = ({ setAddress }) => {
     } else if (elementRef.current) {
       elementRef.current.innerHTML = '';
     }
-  }, [isPostcodeOpen, setAddress, togglePostcode, dispatch]);
+  }, [isPostcodeOpen, setAddress, togglePostcode]);
 
   return (
     <DropdownContainer>

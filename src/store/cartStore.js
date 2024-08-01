@@ -14,6 +14,7 @@ const cartStore =create((set,get)=>({
 	deliveryAddress:'',//에러 안나게 우선
 	zeroCartItemCount:()=>set({cartItemCount:0}),
 	zeroCart:()=>set({cart:{}}),
+	setCartQuantity:(q)=>{set({quantity: q})},
 	addToCart: async(bookId) => {
 		try{
 			const resp = await api.post('/cart',{bookId})
@@ -168,7 +169,7 @@ const cartStore =create((set,get)=>({
 
 // 		}
 // 	},
-// 	setCartQuantity:(q)=>{set({quantity: q})},
+	
 // 	setBookGroup:()=>{},
 // 	resetBookListByCategory:()=>{},
 	

@@ -49,7 +49,7 @@ const DeliveryPolicy = () => {
               <TableCell sx={{ outline: '1px solid #DFE4DF' }}>
                 <Box>
                   {' '}
-                  - 마이페이지 <a href="/mypage">반품/교환 신청 및 조회,</a> <a href="/contact">1:1 문의</a>, 고객만족센터(1544-3800), 중고샵(1566-4295)
+                  - 마이페이지 <a href="/mypage">반품/교환 신청 및 조회,</a> &nbsp;&nbsp;<a href="/contact">1:1 문의</a>, 고객만족센터(1544-3800), 중고샵(1566-4295)
                 </Box>
                 <Box> - 판매자 배송 상품은 판매자와 반품/교환이 협의된 상품에 한해 가능합니다.</Box>
               </TableCell>

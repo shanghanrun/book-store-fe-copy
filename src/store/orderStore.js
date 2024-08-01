@@ -10,7 +10,10 @@ const orderStore = create((set,get)=>({
 	requestList: [],
 	myRequestList: [],
 	selectedRequest: null,
+	fullAddress:'',
 	setSelectedOrder:(order)=>{set({selectedOrder: order})},
+	setSelectedRequest:(request)=>{set({selectedRequest:request})},
+	setFullAddress:(address)=>{set({fullAddress:address})},
 	createOrder:async(payload)=>{
 		console.log('createOrder 실행됨')
 		try{
@@ -52,13 +55,17 @@ const orderStore = create((set,get)=>({
 			console.log(e)
 		}
 	},
-	//주문 문의 신청
+	//반품 및 교환 신청
 	requestOrder:async(orderNum,requestType,reason,navigate)=>{
 		try{
 			const resp = await api.post('/order/request', {orderNum,requestType, reason})
-			set({requestList: resp.data.order})
+			set({requestList: [...get().requestList, resp.data.order]})
 			uiStore.getState().showToastMessage('상품문의를 완료했습니다.', 'success')
-			navigate('/mypage/order-claim-list')
+			if(requestType ==='취소'){
+				navigate('/mypage/order-cancel-list')
+			} else{
+				navigate('/mypage/order-claim-list')
+			}
 		}catch(e){
 			console.log(e)
 		}

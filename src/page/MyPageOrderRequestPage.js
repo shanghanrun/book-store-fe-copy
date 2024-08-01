@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Box, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
 import { Container } from '@mui/system';
-import { orderActions } from '../action/orderActions';
 import { useNavigate } from 'react-router';
+import orderStore from '../store/orderStore';
+import userStore from './../store/userStore';
 
-const OrderRequestPage = () => {
-  const dispatch = useDispatch();
+const MyPageOrderRequestPage = () => {
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.user);
-  const { myOrderList } = useSelector((state) => state.order);
+  const { user } = userStore();
+  const { myOrderList, getMyOrder, requestOrder } = orderStore();
   const [orderNum, setOrderNum] = useState('');
   const [requestType, setRequestType] = useState('');
   const [reason, setReason] = useState('');
 
   useEffect(() => {
-    dispatch(orderActions.getMyOrder());
-  }, [dispatch, user]);
+    getMyOrder();
+  }, [user]);
 
   const handleSubmit = () => {
-    dispatch(orderActions.requestOrder(orderNum, requestType, reason, navigate));
+    requestOrder(orderNum, requestType, reason, navigate);
   };
 
   return (
@@ -32,11 +31,11 @@ const OrderRequestPage = () => {
             {myOrderList?.length > 0 &&
               myOrderList.map((order) => (
                 <MenuItem key={order._id} value={order.orderNum}>
-                  {`${order?.orderNum} - ${
+                  {`${order?.orderNum} - 🎁 ${
                     order.items
-                      .map((item) => item.bookId?.title)
-                      .join(', ')
-                      .slice(0, 30) || '제목 없음'
+                      .map((item) => (item.bookId?.title).slice(0,11))
+                      .join(' 🎁 ')
+                      .slice(0, 35) || '제목 없음'
                   }...`}
                 </MenuItem>
               ))}
@@ -59,4 +58,4 @@ const OrderRequestPage = () => {
   );
 };
 
-export default OrderRequestPage;
+export default MyPageOrderRequestPage;

@@ -27,7 +27,7 @@ import MyPageWishList from '../page/MyPageWishList';
 import PasswordConfirmPage from '../page/PasswordConfirmPage';
 import UserInfoPage from '../page/UserInfoPage';
 import AccountDeletionPage from '../page/AccountDeletionPage';
-import OrderRequestPage from '../page/OrderRequestPage';
+import MyPageOrderRequestPage from '../page/MyPageOrderRequestPage';
 
 const AppRouter = () => {
   return (
@@ -62,7 +62,7 @@ const AppRouter = () => {
           <Route path="/mypage/order-list" element={<MyPageOrderList />} />
           <Route path="/mypage/order-claim-list" element={<MyPageOrderClaimList />} />
           <Route path="/mypage/order-cancel-list" element={<MyPageOrderCancelList />} />
-          <Route path="/mypage/order-request" element={<OrderRequestPage />} />
+          <Route path="/mypage/order-request" element={<MyPageOrderRequestPage />} />
           <Route path="/mypage/my-review" element={<MyPageMyReview />} />
           <Route path="/mypage/wishlist" element={<MyPageWishList />} />
 

@@ -41,7 +41,7 @@ const MyPageOrderDialog = ({ open, handleClose }) => {
   const { selectedOrder } = orderStore();
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>주문 상세 정보</DialogTitle>
       <DialogContent dividers>
         <TableContainer component={Paper}>

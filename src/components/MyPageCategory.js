@@ -64,7 +64,7 @@ const MyPageCategory = () => {
 
 
   const myShoppingList = [
-    { title: '주문내역/배송조회', link: '/mypage/order-title' },
+    { title: '주문내역/배송조회', link: '/mypage/order-list' },
     { title: '반품/교환 신청 및 조회', link: '/mypage/order-claim-list' },
     { title: '취소 주문 내역', link: '/mypage/order-cancel-list' },
     { title: '리뷰 관리', link: '/mypage/my-review' },
