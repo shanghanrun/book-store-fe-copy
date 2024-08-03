@@ -1,38 +1,50 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Link, Container, Grid, useMediaQuery, Paper } from '@mui/material';
 import MyPageCategory from '../components/MyPageCategory';
-import { useDispatch, useSelector } from 'react-redux';
-import { commentActions } from '../action/commentAction';
+import commentStore from '../store/commentStore';
+import userStore from './../store/userStore';
 
 const MyPageMyReview = () => {
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
-  const { userComment } = useSelector((state) => state.comment);
+  const navigate = useNavigate();
+  const { user } = userStore();
+  const { userComments, getMyComments } = commentStore();
   const isMobile = useMediaQuery('(max-width:600px)');
 
-  // console.log('userComment', userComment);
-
-  const comments = userComment?.comment || [];
+  const comments = userComments? userComments : [];
 
   useEffect(() => {
-    dispatch(commentActions.getMyComment());
-  }, [dispatch]);
+    getMyComments();
+  }, []);
+
+  function gotoBook(bookId){
+    navigate(`/book/${bookId}`)
+  }
 
   // 중복된 책을 하나로 묶기 위한 작업
+  // 하나의 책에 대해서 여러번 리뷰들을 달 수도 있다.
+  // 화면에 보여줄 것은 각각의 책에 리뷰들을 넣어서 다시 분류해야 된다.
+  // 그러므로 book을 중심으로, comment들을 다시 조합해서 넣어야 된다.
   const uniqueBooks = {};
-  comments.forEach((review) => {
-    if (!uniqueBooks[review.bookId._id]) {
-      uniqueBooks[review.bookId._id] = {
-        ...review.bookId,
-        reviews: [review],
+  comments.forEach((comment) => {
+    if (!uniqueBooks[comment.bookId._id]) {
+      uniqueBooks[comment.bookId._id] = {
+        ...comment.bookId,  // bookId로 populate된 book정보들
+        reviews: [comment], // 새롭게 reviews필드 만들고,빈배열에 comment정보 넣기
       };
     } else {
-      uniqueBooks[review.bookId._id].reviews.push(review);
+      //해당 책에 대한 comment들을 선별해서 넣기
+      if(comment.userId === user._id){
+        uniqueBooks[comment.bookId._id].reviews.push(comment);
+      }
+      // uniqueBooks[comment.bookId._id].reviews.push(comments);
     }
   });
-
-  // uniqueBooks 객체를 배열로 변환
+  console.log('최초 uniqueBooks', uniqueBooks)
+  // uniqueBooks 객체의 value값들을 뽑아 내기(배열로 변환)
+  // uniqueBooks안에는 'comment.bookId._id'값의 key 들과 그에 해당하는 value들이 있다. value들은 {객체형태}, 바로 이 객체들만 뽑아 내는 것이다.
   const uniqueBookList = Object.values(uniqueBooks);
+  console.log('uniqueBookList :', uniqueBookList)
 
   const cellStyle = {
     whiteSpace: 'nowrap',
@@ -123,7 +135,19 @@ const MyPageMyReview = () => {
               {isMobile ? (
                 <Box>
                   {uniqueBookList.map((book) => (
-                    <Box key={book._id} mt={5} mb={2}>
+                    <Box key={book._id} mt={5} mb={2}
+                      onClick={()=>gotoBook(book._id)}
+                      sx={{
+                        cursor: 'pointer', // 포인터 커서로 변경
+                        padding: '16px', // 여백 추가
+                        border: '1px solid #ddd', // 테두리 추가
+                        borderRadius: '8px', // 모서리 둥글게
+                        transition: 'background-color 0.3s', // 배경색 변화에 대한 부드러운 전환 효과
+                        '&:hover': {
+                          backgroundColor: '#f0f0f0', // 호버 시 배경색 변경
+                        },
+                      }}
+                    >
                       <Container>
                         <Grid container spacing={2} alignItems="center" component={Paper}>
                           {/* 이미지 (모바일 화면에서 왼쪽 정렬, 나머지는 오른쪽 정렬) */}
@@ -140,9 +164,9 @@ const MyPageMyReview = () => {
                               <Typography variant="body2" sx={{ fontWeight: 'medium', color: 'text.secondary', mb: 1 }}>
                                 {book.author} | {book.pubDate?.slice(0, 10)}
                               </Typography>
-                              {book.reviews.map((review) => (
-                                <Typography key={review._id} variant="body2" mb={1}>
-                                  {review.createdAt?.slice(0, 10)} | {review.content}
+                              {book.reviews.map((comment) => (
+                                <Typography key={comment._id} variant="body2" mb={1}>
+                                  {comment.createdAt?.slice(0, 10)} | {comment.content}
                                 </Typography>
                               ))}
                             </Box>
@@ -155,7 +179,17 @@ const MyPageMyReview = () => {
               ) : (
                 <Box>
                   {uniqueBookList.map((book) => (
-                    <Box mb={2} key={book._id}>
+                    <Box mb={2} key={book._id} onClick={()=>gotoBook(book._id)}
+                    sx={{
+                      cursor: 'pointer', // 포인터 커서로 변경
+                      padding: '16px', // 여백 추가
+                      border: '1px solid #ddd', // 테두리 추가
+                      borderRadius: '8px', // 모서리 둥글게
+                      transition: 'background-color 0.3s', // 배경색 변화에 대한 부드러운 전환 효과
+                      '&:hover': {
+                        backgroundColor: '#f0f0f0', // 호버 시 배경색 변경
+                      },
+                    }}>
                       <Container>
                         <Grid container>
                           <Grid item md={4}>

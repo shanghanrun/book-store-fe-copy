@@ -17,8 +17,9 @@ import orderStore from './../store/orderStore';
 const BookDetailPage = () => {
   const [address, setAddress] = useState('지역을 선택해주세요');
   const { fullAddress, deliveryInfo } = orderStore();
-  const { getBookDetail, selectedBook, getBooksLoading, otherBooksByAuthor } = bookStore();
+  const { getBookDetailById, selectedBook, getBooksLoading, otherBooksByAuthor } = bookStore();
   const { bookid } = useParams();
+  const bookId = bookid
   const { favorite, getFavorite } = favoriteStore();
   const { user } = userStore();
   const isMobile = useMediaQuery('(max-width: 600px)');
@@ -26,31 +27,33 @@ const BookDetailPage = () => {
   useEffect(() => {
     if (user) {
       getFavorite();
+      // getBookDetailById(bookId)
     }
   }, [user]);
 
   useEffect(() => {
-    if (bookid) {
-      getBookDetail(bookid);
+    if (bookId) {
+      getBookDetailById(bookId);
     }
-  }, [bookid]);
+  }, []);
+  // }, [bookId]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (getBooksLoading || !selectedBook) {
-    return <div className="loading"></div>;
+  if (!selectedBook) {
+    return <div className="loading">Loading...</div>;
   }
 
   return (
     <Container sx={{ mt: { xs: 8, md: 16 }, mb:4 }}>
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
-            {selectedBook.cover && <BookImage cover={selectedBook.cover} />}
+            {selectedBook?.cover && <BookImage cover={selectedBook?.cover} />}
           </Grid>
           <Grid item xs={12} md={8}>
-            <BookBasicInfo title={selectedBook.title} author={selectedBook.author} publisher={selectedBook.publisher} price={selectedBook.priceStandard} />
+            <BookBasicInfo title={selectedBook?.title} author={selectedBook?.author} publisher={selectedBook.publisher} price={selectedBook.priceStandard} />
             <BookToCart
               favorite={favorite?.some((favorite) => favorite._id === selectedBook._id)}
               selectedBook={selectedBook}

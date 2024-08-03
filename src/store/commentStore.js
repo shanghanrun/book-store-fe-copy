@@ -1,12 +1,16 @@
 import {create} from 'zustand'
+import api from './../utils/api';
 
 const commentStore = create((set,get)=>({
 	comments: [],
 	userComments: [],
 	commentsUpdated:false,
-	createComment:async(comment,bookId)=>{
+	createComment:async({content,bookId})=>{
+		console.log('createComment')
+		console.log('content:', content);
+		console.log('bookId', bookId)
 		try{
-			const resp= await api.post('/comments', {comment,bookId})
+			const resp= await api.post('/comments', {content,bookId})
 			console.log('comment resp', resp)
 			set({
 				comments: [...get().comments, resp.data.comment],
@@ -23,7 +27,7 @@ const commentStore = create((set,get)=>({
 			console.log('resp', resp)
 			set({
 				comments:resp.data.comments,
-				commentsUpdated:!get().commentUpdated
+				commentsUpdated:!get().commentsUpdated
 			})
 		}catch(e){
 			console.log(e)

@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { favoriteActions } from '../action/favoriteActions';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Paper, Button, Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { tableCellClasses } from '@mui/material/TableCell';
+import favoriteStore from './../store/favoriteStore';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -26,16 +25,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const MyPageWishlistTable = ({ style }) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const favoriteTableHead = ['', '도서명', '저자', '출판사', '출간일'];
-  const { favorite } = useSelector((state) => state.favorite);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const { favorite, getFavorite } = favoriteStore();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    dispatch(favoriteActions.getFavorite());
-  }, [dispatch]);
+    getFavorite();
+  }, []);
 
   // 페이지네이션
   const handleChangePage = (event, newPage) => {

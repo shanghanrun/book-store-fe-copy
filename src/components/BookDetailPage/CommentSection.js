@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { Button, TextField, Typography, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Box } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useDispatch, useSelector } from 'react-redux';
-import { commentActions } from '../../action/commentAction';
 import CommentList from './CommentList';
+import commentStore from './../../store/commentStore';
 
 const CommentSection = ({ comments, bookId, deleteComment, user }) => {
-  const dispatch = useDispatch();
-
+  console.log('CommentsSection의 bookId', bookId)
+  const {createComment, getCommentsByBook} = commentStore()
   const [newComment, setNewComment] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(commentActions.createComment({ content: newComment, bookId: bookId }));
+    createComment({ content: newComment, bookId: bookId });
     setNewComment('');
   };
 
   useEffect(() => {
-    dispatch(commentActions.getCommentsByBook(bookId));
+    getCommentsByBook(bookId);
   }, [comments.length]);
 
   return (

@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { commentActions } from '../action/commentAction';
 import PropTypes from 'prop-types';
 import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper } from '@mui/material';
 import { KeyboardArrowDown as KeyboardArrowDownIcon, KeyboardArrowUp as KeyboardArrowUpIcon } from '@mui/icons-material';
+import commentStore from '../store/commentStore';
 
 const MyPageMyReviewTable = ({ style }) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { userComment } = useSelector((state) => state.comment);
-  const comments = userComment?.comment || [];
+  const { userComments, getMyComments } = commentStore();
+  const comments = userComments? userComments : [];
 
   useEffect(() => {
-    dispatch(commentActions.getMyComment());
-  }, [dispatch]);
+    getMyComments();
+  }, []);
 
   // 중복된 책을 필터링하여 하나의 책만 포함된 배열을 반환하는 함수
   const getUniqueBooks = (comments) => {
     const uniqueBooks = [];
     const bookIds = new Set(); // 중복 체크를 위한 Set
 
+    //Set의 has는 시간복잡도 O(1), 이에 비해 List의 includes는 O(n) 
     comments.forEach((comment) => {
       if (!bookIds.has(comment.bookId._id)) {
         bookIds.add(comment.bookId._id);
         uniqueBooks.push(comment.bookId); // uniqueBooks 배열에 bookId만 추가
       }
     });
-
     return uniqueBooks;
   };
 

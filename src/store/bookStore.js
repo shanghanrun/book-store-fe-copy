@@ -57,10 +57,16 @@ const bookStore = create((set,get)=>({
 
 		}
 	},
-	getBookDetail:async(id)=>{
+	getBookDetailById:async(bookId)=>{
 		try{
-			const resp = await api.get(`book/detail/${id}`);
-    		if (response.status !== 200) throw new Error(response.error);
+			const resp = await api.get(`book/detail/${bookId}`);
+			// console.log('getBookDetail..resp.data', resp.data)
+			// console.log('reap.data.book:', resp.data.data.book)
+
+			set({
+				selectedBook: resp.data.data.book,
+				otherBooksByAuthor:resp.data.data.otherBooksByAuthor
+			})
 		}catch(e){
 			uiStore.getState().showToastMessage(e.error,'error')
 		}

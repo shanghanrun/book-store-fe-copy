@@ -2,19 +2,19 @@ import React, { useEffect } from 'react';
 import { Box, Typography, Link, Container, Grid, useMediaQuery, TableContainer, Paper } from '@mui/material';
 import MyPageCategory from '../components/MyPageCategory';
 import BookCard from '../components/BookCard';
-import { useDispatch, useSelector } from 'react-redux';
-import { favoriteActions } from '../action/favoriteActions';
+import bookStore from '../store/bookStore';
+import favoriteStore from './../store/favoriteStore';
+import userStore from './../store/userStore';
 
 const MyPageWishList = () => {
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
-  const { favorite } = useSelector((state) => state.favorite);
-  const { bookList } = useSelector((state) => state.book);
+  const { user } = userStore();
+  const { favorite, getFavorite } = favoriteStore();
+  const { bookList } = bookStore();
   const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
-    dispatch(favoriteActions.getFavorite());
-  }, [dispatch, user]);
+    getFavorite();
+  }, [user]);
 
   const cellStyle = {
     whiteSpace: 'nowrap',

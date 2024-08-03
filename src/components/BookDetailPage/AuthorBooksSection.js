@@ -9,12 +9,12 @@ const AuthorBooksSection = ({ otherBooksByAuthor }) => {
   return (
     <Box id="author" my={4}>
       <Typography variant="h4">저자의 다른 책들</Typography>
-      {otherBooksByAuthor.length !== 0 ? (
+      {otherBooksByAuthor?.length !== 0 ? (
         isMobile ? (
           <BooksCarousel bookList={otherBooksByAuthor} moreButton={false} />
         ) : (
           <Grid container spacing={2} mt={2}>
-            {otherBooksByAuthor.map((otherBook) => (
+            {otherBooksByAuthor?.map((otherBook) => (
               <Grid item xs={6} sm={4} md={3} key={otherBook._id}>
                 <BookCard book={otherBook} sx={{ width: 120, height: 180 }} />
               </Grid>
