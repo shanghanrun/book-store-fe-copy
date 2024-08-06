@@ -284,7 +284,7 @@ const PaymentPage = () => {
               onChange={handleShippingInfoChange}
               margin="normal"
               error={!!errors.name}
-              helperText={errors.name}
+              helpertext={errors.name}
             />
             <Box display="flex" alignItems="center">
               <TextField
@@ -294,7 +294,7 @@ const PaymentPage = () => {
                 onChange={handleShippingInfoChange}
                 margin="normal"
                 error={!!errors.zipCode}
-                helperText={errors.zipCode}
+                helpertext={errors.zipCode}
               />
               <Button variant="contained" color="primary" onClick={handlePostcode} sx={{ height: '56px', ml: 2 }}>
                 주소찾기
@@ -308,7 +308,7 @@ const PaymentPage = () => {
               onChange={handleShippingInfoChange}
               margin="normal"
               error={!!errors.address1}
-              helperText={errors.address1}
+              helpertext={errors.address1}
             />
             <TextField fullWidth label="상세 주소" name="address2" value={shippingInfo.address2} onChange={handleShippingInfoChange} margin="normal" />
             <TextField
@@ -319,7 +319,7 @@ const PaymentPage = () => {
               onChange={handleShippingInfoChange}
               margin="normal"
               error={!!errors.phone}
-              helperText={errors.phone}
+              helpertext={errors.phone}
             />
             <TextField
               fullWidth
@@ -329,7 +329,7 @@ const PaymentPage = () => {
               onChange={handleShippingInfoChange}
               margin="normal"
               error={!!errors.email}
-              helperText={errors.email}
+              helpertext={errors.email}
             />
           </Box>
           <Box mt={4}>
@@ -347,7 +347,7 @@ const PaymentPage = () => {
               <Box>
                 <FormControl fullWidth margin="normal">
                   <InputLabel>카드사 선택</InputLabel>
-                  <Select name="cardType" value={cardInfo.cardType} onChange={handleCardInfoChange} error={!!errors.cardType} helperText={errors.cardType}>
+                  <Select name="cardType" value={cardInfo.cardType} onChange={handleCardInfoChange} error={!!errors.cardType} helpertext={errors.cardType}>
                     <MenuItem value="visa">Visa</MenuItem>
                     <MenuItem value="mastercard">MasterCard</MenuItem>
                     <MenuItem value="amex">American Express</MenuItem>
@@ -361,7 +361,7 @@ const PaymentPage = () => {
                   onChange={handleCardInfoChange}
                   margin="normal"
                   error={!!errors.cardNumber}
-                  helperText={errors.cardNumber}
+                  helpertext={errors.cardNumber}
                 />
                 <TextField
                   fullWidth
@@ -371,7 +371,7 @@ const PaymentPage = () => {
                   onChange={handleCardInfoChange}
                   margin="normal"
                   error={!!errors.expiryDate}
-                  helperText={errors.expiryDate}
+                  helpertext={errors.expiryDate}
                 />
                 <TextField
                   fullWidth
@@ -381,7 +381,7 @@ const PaymentPage = () => {
                   onChange={handleCardInfoChange}
                   margin="normal"
                   error={!!errors.cvc}
-                  helperText={errors.cvc}
+                  helpertext={errors.cvc}
                 />
               </Box>
             )}
@@ -397,6 +397,7 @@ const PaymentPage = () => {
             sticky={true}
             errors={errors}
             setErrors={setErrors}
+            paymentMethod={paymentMethod}
           />
         </Grid>
       </Grid>

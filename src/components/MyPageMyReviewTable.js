@@ -22,15 +22,16 @@ const MyPageMyReviewTable = ({ style }) => {
     //Set의 has는 시간복잡도 O(1), 이에 비해 List의 includes는 O(n) 
     comments.forEach((comment) => {
       if (!bookIds.has(comment.bookId._id)) {
-        bookIds.add(comment.bookId._id);
         uniqueBooks.push(comment.bookId); // uniqueBooks 배열에 bookId만 추가
+
+        bookIds.add(comment.bookId._id);
       }
     });
     return uniqueBooks;
   };
 
   const uniqueBooks = getUniqueBooks(comments);
-
+  console.log('uniqueBooks', uniqueBooks)
   return (
     <>
       <Box>

@@ -22,23 +22,41 @@ const bookStore = create((set,get)=>({
 		try{
 			const response = await api.post('/book', bookForm);
 			uiStore.getState().showToastMessage('도서 상품을 추가했습니다.', 'success');
-			get().getBookList();
+			get().getBookList({});
 		}catch(e){
 			uiStore.getState().showToastMessage(e.error, 'error')
 		}
 	},
+	// getAllBooks: async(query)=>{
+	// 	try{
+	// 		const resp = await api.get('/book', {
+	// 			params:{...query}
+	// 		})
+	// 		// console.log('getBookList의 resp.data', resp.data)
+	// 		console.log('bookList', resp.data.books)// books였다!
+	// 		set({bookList: resp.data.books})
+	// 	}catch(e){
+	// 		console.log(e.error)
+	// 	}
+	// },
 	getBookList:async(query)=>{
 		try{
-			const resp = await api.get('/book', {
-				params:{...query}
-			})
-			// console.log('getBookList의 resp.data', resp.data)
-			console.log('bookList', resp.data.books)// books였다!
+			const resp = await api.get('/book', {params: {...query}})
 			set({bookList: resp.data.books})
 		}catch(e){
-			console.log(e.error)
+			console.log(e)
 		}
 	},
+	// getBookList:async(query)=>{
+	// 	console.log('qetBookList query', query)
+	// 	try{
+	// 		const resp = await api.get(`/book/search`,{params: {query}})
+	// 		console.log('bookList', resp.data.books)// books였다!
+	// 		set({bookList: resp.data.books})
+	// 	}catch(e){
+	// 		console.log(e.error)
+	// 	}
+	// },
 	getBookListByGroup:async(bookGroup,query)=>{
 		try{
 			const resp = await api.get(`/book/group/${bookGroup}`, {
@@ -74,7 +92,7 @@ const bookStore = create((set,get)=>({
 	deleteBook:async(id)=>{
 		try{
 			const resp = await api.delete(`/book/${id}`);
-			get().getBookList()
+			get().getBookList({})
 		}catch(e){
 
 		}
@@ -82,7 +100,7 @@ const bookStore = create((set,get)=>({
 	updateBook:async(bookForm,id)=>{
 		try{
 			const resp = await api.put(`/book/${id}`, bookForm);
-			get().getBookList()
+			get().getBookList({})
 		}catch(e){
 
 		}

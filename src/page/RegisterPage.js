@@ -123,7 +123,7 @@ const RegisterPage = () => {
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
                 error={userNameError}
-                helperText={userNameError ? 'User name must contain only letters, spaces, and hyphens.' : ''}
+                helpertext={userNameError ? 'User name must contain only letters, spaces, and hyphens.' : ''}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -139,7 +139,7 @@ const RegisterPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 error={emailError || userExistsError}
-                helperText={emailError ? 'Email is not valid.' : userExistsError ? 'User already exists.' : ''}
+                helpertext={emailError ? 'Email is not valid.' : userExistsError ? 'User already exists.' : ''}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -156,7 +156,7 @@ const RegisterPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 error={passwordError}
-                helperText={passwordError ? "Passwords don't match." : ''}
+                helpertext={passwordError ? "Passwords don't match." : ''}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -173,7 +173,7 @@ const RegisterPage = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 error={passwordError}
-                helperText={passwordError ? "Passwords don't match." : ''}
+                helpertext={passwordError ? "Passwords don't match." : ''}
                 InputLabelProps={{
                   shrink: true,
                 }}

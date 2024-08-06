@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 
-const StyledTextField = styled(TextField)(({ theme, isMobile }) => ({
+const StyledTextField = styled(({ isMobile, ...other }) => <TextField {...other} />)(({ theme, isMobile }) => ({
   '& .MuiOutlinedInput-root': {
     borderTopLeftRadius: '50px',
     borderBottomLeftRadius: '50px',
@@ -29,14 +29,14 @@ const StyledTextField = styled(TextField)(({ theme, isMobile }) => ({
   width: isMobile ? 'calc(100% - 40px)' : 'calc(100% - 60px)',
 }));
 
-const StyledButton = styled(Button)(({ isMobile }) => ({
+const StyledButton = styled(({ isMobile, ...other }) => <Button {...other} />)(({ isMobile }) => ({
   borderTopRightRadius: '50px',
   borderBottomRightRadius: '50px',
-  height: isMobile ? '20px' : '40px', // 모바일과 데스크탑 높이 조정
-  width: isMobile ? '40px' : '60px', // 버튼 고정 너비 설정
-  fontSize: isMobile ? '0.75rem' : '1rem', // 버튼 텍스트 크기 조정
+  height: isMobile ? '20px' : '40px',
+  width: isMobile ? '40px' : '60px',
+  fontSize: isMobile ? '0.75rem' : '1rem',
   minWidth: 0,
-  padding: 0, // 패딩 제거
+  padding: 0,
 }));
 
 const SearchBook = ({ searchQuery, setSearchQuery, fields, resetSearch }) => {
@@ -53,18 +53,18 @@ const SearchBook = ({ searchQuery, setSearchQuery, fields, resetSearch }) => {
     const queryValue = searchQuery[selectedField] || '';
     if (queryValue.trim() === '') {
       navigate('/');
-      setSearchQuery('');
+      setSearchQuery({});
     } else {
       const searchPath = `/search?${selectedField}=${queryValue}`;
-      // Reset the search query to keep only the selected field
-      const newSearchQuery = { [selectedField]: queryValue };
-      setSearchQuery(newSearchQuery);
+
       navigate(searchPath);
+      setSearchQuery({});      
     }
   };
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
+      event.preventDefault(); // 폼 제출시 페이지 고침 안되게?
       handleSearch();
     }
   };

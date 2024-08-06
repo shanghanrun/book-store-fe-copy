@@ -36,6 +36,12 @@ const OrderCompletePage = () => {
     return now.toLocaleString('ko-KR', options);
   };
 
+  const koreanPaymentMethod=(method)=>{
+    if(method==='creditCard') return '신용카드';
+    if(method==='transfer') return '무통장입금';
+    if(method==='phonePayment') return '핸드폰입금';
+  }
+
   return (
     <Container maxWidth="sm" sx={{ mt: 4, mb: 4, border: '1px solid #ddd', borderRadius: '8px', padding: '16px' }}>
       <Box textAlign="center" mb={4}>
@@ -99,11 +105,11 @@ const OrderCompletePage = () => {
           결제수단
         </Typography>
         <Typography variant="body2">
-          {paymentMethod}
+          {koreanPaymentMethod(paymentMethod)}
           {paymentMethod === 'transfer' && (
-            <Typography variant="body2" color="error" ml={2}>
-              {getDepositDeadline()}까지 입금해주세요.
-            </Typography>
+            <div style={{color:'red', marginLeft:'16px'}}>
+              {getDepositDeadline()}까지 <br></br> '농협 401140-52-177777 북두칠성' 계좌로 입금해주세요.
+            </div>
           )}
         </Typography>
       </Box>

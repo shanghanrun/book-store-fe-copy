@@ -7,7 +7,7 @@ const favoriteStore = create((set,get)=>({
 	getFavorite:async()=>{
 		try{
 			const resp = await api.get('/favorite')
-			console.log('favorite :', resp)
+			// console.log('favorite :', resp)
 			set({favorite: resp.data.favorite.favorite})
 		}catch(e){
 			console.log(e)

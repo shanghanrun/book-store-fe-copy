@@ -18,14 +18,12 @@ import {
   Typography,
   Grid,
 } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
 import { ORDER_STATUS } from '../constants/order.constants';
-import { orderActions } from '../action/orderActions';
 import { currencyFormat } from '../utils/number';
+import orderStore from './../store/orderStore';
 
 const AdminPageOrderDialog = ({ open, handleClose, orderDialogTableHead }) => {
-  const dispatch = useDispatch();
-  const { selectedOrder } = useSelector((state) => state.order);
+  const { selectedOrder, updateOrder } = orderStore();
   const [orderStatus, setOrderStatus] = useState(selectedOrder?.status || '');
 
   // 주문 진행 상태 변경 핸들러.
@@ -36,7 +34,7 @@ const AdminPageOrderDialog = ({ open, handleClose, orderDialogTableHead }) => {
   // 주문 변경 제출 핸들러.
   const handleOrderSubmit = (event) => {
     event.preventDefault();
-    dispatch(orderActions.updateOrder(selectedOrder._id, orderStatus));
+    updateOrder(selectedOrder._id, orderStatus);
     handleClose();
   };
 
@@ -64,8 +62,8 @@ const AdminPageOrderDialog = ({ open, handleClose, orderDialogTableHead }) => {
 
             {/* 테이블 바디 */}
             <TableBody>
-              {selectedOrder.items.length > 0 &&
-                selectedOrder.items.map((order) => (
+              {selectedOrder?.items.length > 0 &&
+                selectedOrder?.items.map((order) => (
                   <TableRow key={order?._id}>
                     <TableCell>{order?._id}</TableCell>
                     <TableCell>{order?.bookId?.title}</TableCell>

@@ -40,7 +40,7 @@ const MyPageMyReview = () => {
       // uniqueBooks[comment.bookId._id].reviews.push(comments);
     }
   });
-  console.log('최초 uniqueBooks', uniqueBooks)
+  // console.log('최초 uniqueBooks', uniqueBooks)
   // uniqueBooks 객체의 value값들을 뽑아 내기(배열로 변환)
   // uniqueBooks안에는 'comment.bookId._id'값의 key 들과 그에 해당하는 value들이 있다. value들은 {객체형태}, 바로 이 객체들만 뽑아 내는 것이다.
   const uniqueBookList = Object.values(uniqueBooks);

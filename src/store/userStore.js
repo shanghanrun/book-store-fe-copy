@@ -107,7 +107,10 @@ const userStore =create((set,get)=>({
 	registerAdmin:async({email,userName,password, role})=>{
 		try{
 			const resp = await api.post('/user', {email,userName,password,role});
-			set({user:resp.data.user})
+			set({
+				user:resp.data.user,
+				userUpdated: !get().userUpdated
+			})
 			uiStore.getState().showToastMessage(`${userName}님을 관리자로 추가했습니다.`, 'success');
 			getAllUser();
 		}catch(e){
@@ -115,22 +118,34 @@ const userStore =create((set,get)=>({
 		}
 	},
 	removeUser:async()=>{}, //회원탈퇴할 경우...
+	// 어드민 대쉬보드에서 모든 유저를 get해서 보여주기
+	getAllUser:async()=>{
+		try {
+			const resp = await api.get('/user/all');
+			set({ users: resp.data.users });
+		} catch (e) {
+			console.log(e)
+		}
+	},
 
 	// 어드민 대쉬보드에서 관리자를 get해서 보여주기
 	adminUser:async()=>{
 		try{
 			const resp = await api.get('/user/admin');
 			set({users: resp.data.users})
-			getAllUser()
+			get().getAllUser()
 		}catch(e){
 			console.log(e)
 		}
 	},
 
-	updateUserLevel:async()=>{
+	updateUserLevel:async(id,level)=>{
 		try{
 			const resp = await api.put(`/user/${id}`, {level});
-			set({user: resp.data.user})
+			set({
+				user: resp.data.user,
+				userUpdated: !get().userUpdated
+			})
 			uiStore.getState().showToastMessage(`${level} 등급으로 변경 성공!`, 'success')
 		}catch(e){
 			console.log(e)
@@ -139,7 +154,10 @@ const userStore =create((set,get)=>({
 	confirmPassword:async(password,navigate)=>{
 		try{
 			const resp = await api.post('/user/confirmPassword', {password})
-			set({user: resp.data.user})
+			set({
+				user: resp.data.user,
+				userUpdated: !get().userUpdated
+			})
 			navigate('/member/user-info')
 		}catch(e){
 			console.log(e)
@@ -149,7 +167,22 @@ const userStore =create((set,get)=>({
 	userInfoChange:async(id,newUserInfo)=>{
 		try{
 			const resp = await api.put(`/user/myInfo/${id}`, newUserInfo)
-			set({user: resp.data.user})
+			set({
+				user: resp.data.user,
+				userUpdated: !get().userUpdated
+			})
+		}catch(e){
+			console.log(e)
+		}
+	},
+	deleteAdmin:async(id)=>{
+		try{
+			const resp = await api.delete(`/user/admin/delete/${id}`)
+			set({
+				user: null,
+				userUpdated: !get().userUpdated
+			});
+			uiStore.getState().showToastMessage('해당 admin을 삭제했습니다.', 'success')
 		}catch(e){
 			console.log(e)
 		}
@@ -157,7 +190,10 @@ const userStore =create((set,get)=>({
 	deleteUser:async(id, password,navigate)=>{
 		try{
 			const resp = await api.post(`/user/delete/${id}`, {password})
-			set({user: null});
+			set({
+				user: null,
+				userUpdated: !get().userUpdated
+			});
 			get().logout()
 			navigate('/')
 			uiStore.getState().showToastMessage('회원탈퇴를 완료했습니다.', 'success')

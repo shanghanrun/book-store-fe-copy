@@ -22,7 +22,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-const UserPermissionsModal = ({ open, handleClose, userData, handleLevelChange, handleDelete, handleEdit }) => {
+const UserPermissionsModal = ({ open, handleClose, userData, handleLevelChange, handleUserEdit }) => {
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>사용자 권한 관리</DialogTitle>
@@ -64,7 +64,7 @@ const UserPermissionsModal = ({ open, handleClose, userData, handleLevelChange, 
                   </TableCell>
                   <TableCell>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <Button color="primary" onClick={() => handleEdit(user._id)}>
+                      <Button color="primary" onClick={() => handleUserEdit(user._id)}>
                         변경
                       </Button>
                     </div>

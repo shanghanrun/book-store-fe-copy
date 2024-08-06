@@ -57,7 +57,7 @@ const AppLayout = ({ children }) => {
             p: 1,
             textAlign: 'center',
           }}>
-          <Typography sx={{ margin: 0, color: '#fff', fontSize: isMobile ? '0.875rem' : '1rem' }}>
+          <Typography component="div" sx={{ margin: 0, color: '#fff', fontSize: isMobile ? '0.875rem' : '1rem' }}>
             10만원 이상 주문 시 모든 주문 무료 배송 (Standard Shipping)
           </Typography>
         </Box>

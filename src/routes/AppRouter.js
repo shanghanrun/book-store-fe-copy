@@ -38,7 +38,7 @@ const AppRouter = () => {
         <Route path="/books/all/category/:categoryid" element={<CategoryPage />} />
         <Route path="/book/:bookid" element={<BookDetailPage />} />
         <Route path="/search" element={<SearchedBooksPage />} />
-        <Route path="/books/all" element={<BooksAllPage />} />
+        {/* <Route path="/books/all" element={<BooksAllPage />} /> */}
         <Route path="/books/group/:bookGroup/*" element={<BooksGroupPage />} />
         <Route path="/books/editor-recommend" element={<EditorPage />} />
 

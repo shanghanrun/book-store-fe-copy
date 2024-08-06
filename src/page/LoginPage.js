@@ -91,7 +91,7 @@ const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   error={emailError}
-                  helperText={emailError ? 'Please enter a valid email address.' : ''}
+                  helpertext={emailError ? 'Please enter a valid email address.' : ''}
                 />
               </FormControl>
               <FormControl margin="normal" required fullWidth>
@@ -103,7 +103,7 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   error={passwordError}
-                  helperText={passwordError ? 'Please enter your password.' : ''}
+                  helpertext={passwordError ? 'Please enter your password.' : ''}
                 />
               </FormControl>
               <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 3, mb: 2 }}>

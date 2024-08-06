@@ -77,7 +77,7 @@ const CategoryBar = ({ bookList }) => {
 
   const goToAllBooksOfGroup = (group) => {
     if (group === '전체 도서') {
-      navigate('/books/all');
+      navigate('/');
     } else if (group === '에디터 추천') {
       navigate('books/editor-recommend');
     } else {

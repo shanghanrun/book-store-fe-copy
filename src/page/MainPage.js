@@ -13,7 +13,7 @@ import userStore from '../store/userStore';
 
 const MainPage = () => {
   const {user} = userStore()
-  console.log('user :', user)
+  // console.log('user :', user)
   const {bookList}=bookStore()
   const { clearFavorite } = favoriteStore()
   const isMobile = useMediaQuery('(max-width: 600px)');

@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Container, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Typography, Tabs, Tab } from '@mui/material';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 import '../style/adminDashboardPageStyles.css';
 import AdminDashboardCard from '../components/AdminDashboardCard';
 import { currencyFormat } from '../utils/number';
-import { userActions } from '../action/userActions';
-import { orderActions } from '../action/orderActions';
-import { contactActions } from '../action/contactActions';
+
 import UserPermissionsModal from '../components/UserPermissionsModal';
 import AdminPermissionsModal from '../components/AdminPermissionsModal';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import userStore from './../store/userStore';
+import orderStore from './../store/orderStore';
+import contactStore from './../store/contactStore';
+
 
 const theme = createTheme({
   typography: {
@@ -20,67 +21,67 @@ const theme = createTheme({
 });
 
 function AdminDashBoardPage() {
-  const dispatch = useDispatch();
   const [openUserModal, setOpenUserModal] = useState(false);
   const [openAdminModal, setOpenAdminModal] = useState(false);
   const [newAdmin, setNewAdmin] = useState({ userName: '', email: '', password: '', role: 'admin' });
   const [selectedTab, setSelectedTab] = useState(0);
   const orderTableHead = ['주문번호', '주문일자', '구매자', '도서명', '총 주문액'];
 
-  // Redux 상태에서 데이터 가져오기
-  const adminData = useSelector((state) => state.user.users);
-  const orderData = useSelector((state) => state.order.orderList);
-  const contacts = useSelector((state) => state.contact.contacts);
-  const requestList = useSelector((state) => state.order.requestList);
-  const [localUserData, setLocalUserData] = useState([]);
-  const [localAdminData, setLocalAdminData] = useState([]);
+  const {users, getAllUser,adminUser,registerAdmin, updateUserLevel, userUpdated, deleteAdmin} = userStore() 
+  const {orderList, requestList,getOrderList, getRequestList} = orderStore()
+  const {contacts,getAllContacts} = contactStore()
+
+  const [userData, setUserData] = useState([]); // 일반유저 list
+  const [adminData, setAdminData] = useState([]); // admin list
   const [monthlySales, setMonthlySales] = useState([]); // 월별 매출을 저장할 상태
   const [orderStatusCounts, setOrderStatusCounts] = useState([0, 0, 0, 0]); // 주문 상태 개수 저장
 
   useEffect(() => {
     // 페이지가 로드될 때 사용자와 어드민 데이터를 불러옴
-    dispatch(userActions.getAllUser());
-    dispatch(userActions.adminUser());
-    dispatch(orderActions.getOrderList());
-    dispatch(contactActions.getAllContacts());
-    dispatch(orderActions.getRequestList());
-  }, [dispatch]);
+    getAllUser(); 
+    // adminUser(); 
+    getOrderList(); 
+    getAllContacts();
+    getRequestList();
+  }, [userUpdated]);
 
   useEffect(() => {
-    if (adminData) {
-      setLocalUserData(adminData.filter((user) => user.role !== 'admin'));
-      setLocalAdminData(adminData.filter((admin) => admin.role === 'admin'));
+    if (users) {
+      setUserData(users.filter((user) => user.role !== 'admin'));
+      setAdminData(users.filter((user) => user.role === 'admin'));
     }
-  }, [adminData]);
+  }, [users, userUpdated]);
 
   // 월별 매출 계산 함수
-  const calculateMonthlySales = (orderData) => {
-    const sales = Array(12).fill(0); // 12개월을 0으로 초기화
-    orderData.forEach((order) => {
+  const calculateMonthlySales = (orderList) => {
+    const sales = Array(12).fill(0); // 12개월을 0으로 초기화 [0,0,...]
+    orderList.forEach((order) => {
       const date = new Date(order.createdAt);
-      const month = date.getMonth(); // 0이 1월
-      sales[month] += order.totalPrice;
+      const month = date.getMonth(); // 8월이면 7이라는 숫자 나온다.
+      sales[month] += order.totalPrice; // sales[6]
     });
 
     // 3월과 4월의 가짜 매출 데이터 추가
-    sales[2] += 50000; // 3월 매출
-    sales[3] += 70000; // 4월 매출
+    sales[2] = 50000; // 3월 매출
+    sales[3] = 70000; // 4월 매출
 
     return sales;
   };
 
+  const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+
   // 주문 상태 개수 계산 함수
-  const calculateOrderStatusCounts = (orders) => {
+  const calculateOrderStatusCounts = (orderList) => {
     const statusMapping = {
       '준비 중': 'preparing',
       '배송 중': 'shipping',
-      배송완료: 'delivered',
-      환불: 'refund',
+      '배송완료': 'delivered',
+      '환불': 'refund',
     };
 
     const statusCounts = { preparing: 0, shipping: 0, delivered: 0, refund: 0 };
 
-    orders.forEach((order) => {
+    orderList.forEach((order) => {
       const englishStatus = statusMapping[order.status];
       if (statusCounts[englishStatus] !== undefined) {
         statusCounts[englishStatus]++;
@@ -92,14 +93,14 @@ function AdminDashBoardPage() {
 
   // 주문 데이터가 변경될 때 월별 매출과 주문 상태 개수 계산
   useEffect(() => {
-    if (orderData && orderData.length > 0) {
-      const sales = calculateMonthlySales(orderData);
+    if (orderList && orderList.length > 0) {
+      const sales = calculateMonthlySales(orderList);
       setMonthlySales(sales);
 
-      const statusCounts = calculateOrderStatusCounts(orderData);
+      const statusCounts = calculateOrderStatusCounts(orderList);
       setOrderStatusCounts(statusCounts);
     }
-  }, [orderData]);
+  }, [orderList]);
 
   const orderStatusData = {
     labels: ['준비 중', '배송 중', '배송완료', '환불'],
@@ -113,14 +114,15 @@ function AdminDashBoardPage() {
   };
 
   const getMonthlySignups = (year, month) => {
-    return localUserData.filter((user) => {
+    return userData.filter((user) => {
       const date = new Date(user.createdAt);
       return date.getFullYear() === year && date.getMonth() === month;
     }).length;
   };
 
   const today = new Date();
-  const currentMonth = today.getMonth();
+  const currentMonth = today.getMonth(); // 8월이면 7숫자 나온다.
+  // console.log('currentMonth', currentMonth)
   const currentYear = today.getFullYear();
 
   const lastMonth = (currentMonth - 1 + 12) % 12;
@@ -137,10 +139,8 @@ function AdminDashBoardPage() {
   const twoMonthsAgoSignups = getMonthlySignups(twoMonthsAgoYear, twoMonthsAgo);
   const threeMonthsAgoSignups = getMonthlySignups(threeMonthsAgoYear, threeMonthsAgo);
 
-  const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-
   const signupData = {
-    labels: [monthNames[threeMonthsAgo], monthNames[twoMonthsAgo], monthNames[lastMonth], monthNames[currentMonth]],
+    labels: [ monthNames[threeMonthsAgo], monthNames[twoMonthsAgo], monthNames[lastMonth], monthNames[currentMonth] ],
     datasets: [
       {
         label: `${currentYear}년 가입자 수`,
@@ -167,57 +167,58 @@ function AdminDashBoardPage() {
     ],
   };
 
-  const handleClickOpenUserModal = () => {
-    setOpenUserModal(true);
-  };
-
-  const handleCloseUserModal = () => {
-    setOpenUserModal(false);
-  };
-
-  const handleClickOpenAdminModal = () => {
-    setOpenAdminModal(true);
-  };
-
-  const handleCloseAdminModal = () => {
-    setOpenAdminModal(false);
-  };
 
   const handleUserChange = (id, event) => {
     const { name, value } = event.target;
-    setLocalUserData((prevUserData) => prevUserData.map((user) => (user._id === id ? { ...user, [name]: value } : user)));
+    setUserData((prevData) => prevData.map((user) => (user._id === id ? { ...user, [name]: value } : user)));
   };
 
-  const handleDelete = (id) => {
-    setLocalAdminData(localAdminData.filter((admin) => admin._id !== id));
-    setLocalUserData(localUserData.filter((user) => user._id !== id));
+  const handleDelete = async (id) => {
+     //이러면 여기서만 바뀌는데?? 데이터베이스도 바뀌어야..
+    //! userStore에 deleteAdmin(userId)르르 만들고, 백엔드에서도 삭제하게 만들어야 될 것 같다.. 
+    await deleteAdmin(id)
+    setAdminData(adminData.filter((admin) => admin._id !== id));
+    // setUserData(userData.filter((user) => user._id !== id));
+    //useEffect에서 users의 값이 바뀌면 다시 로드한다.
+    // userUpdated 디펜던시를 넣어서, 다시 로드하게 한다.
   };
 
-  const handleAddAdmin = () => {
-    dispatch(userActions.registerAdmin(newAdmin));
+  const handleAddAdmin = async() => {
+    await registerAdmin(newAdmin);
+    // setAdminData(users.filter((user) => user.role === 'admin'));
+    // 생성후, 이 페이지의 newAdmin은 초기화
     setNewAdmin({ userName: '', email: '', password: '', role: 'admin' });
   };
 
-  const handleEdit = (id) => {
-    const user = localUserData.find((user) => user._id === id);
+  const handleUserEdit = (id) => {
+    const user = userData.find((user) => user._id === id);
     if (user) {
-      dispatch(userActions.updateUserLevel(user._id, user.level));
+      updateUserLevel(user._id, user.level);
     }
   };
 
-  const adminCardContent = localAdminData.length > 0 ? `${localAdminData[0].userName} 외 ${localAdminData.length - 1}명` : 'No admins';
-  const userCardContent = localUserData.length > 0 ? `Total: ${localUserData.length}명` : 'No users';
+  const adminCardContent = adminData.length > 0 ? `${adminData[0].userName} 외 ${adminData.length - 1}명` : 'No admins';
+  const userCardContent = userData.length > 0 ? `Total: ${userData.length}명` : 'No users';
 
+  // 신규주문:  주문한 것 중에서 '준비중'인 것
+  const newOrders = orderList.filter((order) => order.status === '준비 중').length;
+  // 환불주문: 주문한 것을 환불 요청해서, 환불처리한 것
+  const refundOrders = orderList.filter((order) => order.status === '환불').length;
+  // 환불/반품대기: 환불 요청한 것은 일단 '대기 중'
   const pendingContacts = requestList.filter((request) => request.request.status === '대기 중').length;
-  const refundOrders = orderData.filter((order) => order.status === '환불').length;
-  const newOrders = orderData.filter((order) => order.status === '준비 중').length;
-  const shippingCounts = orderData.filter((order) => order.status === '배송 중').length;
-  const deliveredCounts = orderData.filter((order) => order.status === '배송완료').length;
-  const newSignups = localUserData.filter((user) => {
+
+  // 신규가입: 이번달에 생성된 user들
+  const newSignups = userData.filter((user) => {
     const date = new Date(user.createdAt);
     return date.getFullYear() === currentYear && date.getMonth() === currentMonth;
   }).length;
+  // 문의(1대1문의): contacts
   const inquiries = contacts.length;
+  
+  
+  const shippingCounts = orderList.filter((order) => order.status === '배송 중').length;
+  const deliveredCounts = orderList.filter((order) => order.status === '배송완료').length;
+  
 
   const totalTasks = newOrders + refundOrders + pendingContacts + newSignups + inquiries;
 
@@ -233,7 +234,7 @@ function AdminDashBoardPage() {
     setSelectedTab(newValue);
   };
 
-  const filteredOrderData = orderData?.filter((order) => {
+  const filteredOrderList = orderList?.filter((order) => {
     switch (selectedTab) {
       case 0:
         return order.status === '준비 중';
@@ -303,32 +304,32 @@ function AdminDashBoardPage() {
                       <Tab label={`배송완료 (${deliveredCounts})`} />
                       <Tab label={`환불 (${refundOrders})`} />
                     </Tabs>
-                    <StatusTable orderTableHead={orderTableHead} orderData={filteredOrderData} />
+                    <StatusTable orderTableHead={orderTableHead} orderData={filteredOrderList} />
                   </>
                 }
               />
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <AdminDashboardCard title="사용자 권한 관리" content={userCardContent} onClick={handleClickOpenUserModal} />
+              <AdminDashboardCard title="사용자 권한 관리" content={userCardContent} onClick={()=>setOpenUserModal(true)} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <AdminDashboardCard title="어드민 권한 관리" content={adminCardContent} onClick={handleClickOpenAdminModal} />
+              <AdminDashboardCard title="어드민 권한 관리" content={adminCardContent} onClick={()=>setOpenAdminModal(true)} />
             </Grid>
 
             <UserPermissionsModal
               open={openUserModal}
-              handleClose={handleCloseUserModal}
-              userData={localUserData}
+              handleClose={()=>setOpenUserModal(false)}
+              userData={userData}
               handleLevelChange={handleUserChange}
-              handleDelete={handleDelete}
-              handleEdit={handleEdit}
+              // handleDelete={handleDelete}
+              handleEdit={handleUserEdit}
             />
 
             <AdminPermissionsModal
               open={openAdminModal}
-              handleClose={handleCloseAdminModal}
-              adminData={localAdminData}
+              handleClose={()=>setOpenAdminModal(false)}
+              adminData={adminData}
               newAdmin={newAdmin}
               handleEmailChange={handleUserChange}
               handlePasswordChange={handleUserChange}
@@ -381,7 +382,7 @@ const ContactTable = ({ contacts }) => (
   </TableContainer>
 );
 
-const StatusTable = ({ orderTableHead, orderData }) => (
+const StatusTable = ({ orderTableHead, orderData}) => (
   <TableContainer component={Paper}>
     <Table>
       <TableHead>

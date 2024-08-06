@@ -73,6 +73,7 @@ const Footer = () => {
               Contact
             </Typography>
             <Typography
+              component="div"
               variant="body2"
               sx={{
                 fontSize: { xs: '0.875rem', sm: '1rem' },

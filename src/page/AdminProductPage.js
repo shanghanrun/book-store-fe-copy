@@ -4,17 +4,18 @@ import AdminPageSearchBox from '../components/AdminPageSearchBox';
 import AdminPageProductTable from '../components/AdminPageProductTable';
 import AdminPageProductDialog from '../components/AdminPageProductDialog';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { bookActions } from '../action/bookActions';
-import * as types from '../constants/book.constants';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { bookActions } from '../action/bookActions';
+// import * as types from '../constants/book.constants';
+import bookStore from '../store/bookStore';
 
 const AdminProductPage = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [editBook, setEditBook] = useState(null);
-  const bookTableHead = ['이미지', 'ISBN', '도서명', '저자', '재고', '출판사', '판매가', ''];
-  const { bookList } = useSelector((state) => state.book);
+  const bookTableHead = ['이미지', 'ISBN', '도서명', '저자', '재고', '출판사', '판매가', '',''];
+  const { bookList,getBookList,setSelectedBook,deleteBook } = bookStore();
   const [query, setQuery] = useSearchParams();
   const fields = ['isbn', 'title', 'author', 'category', 'publisher'];
 
@@ -24,30 +25,48 @@ const AdminProductPage = () => {
   }, {});
   const [searchQuery, setSearchQuery] = useState(totalField);
 
-  useEffect(() => {
-    if (searchQuery.isbn === '') delete searchQuery.isbn;
-    if (searchQuery.title === '') delete searchQuery.title;
-    if (searchQuery.author === '') delete searchQuery.author;
-    if (searchQuery.category === '') delete searchQuery.category;
-    if (searchQuery.publisher === '') delete searchQuery.publisher;
+  // useEffect(() => {
+  //   if (searchQuery.isbn === '') delete searchQuery.isbn;
+  //   if (searchQuery.title === '') delete searchQuery.title;
+  //   if (searchQuery.author === '') delete searchQuery.author;
+  //   if (searchQuery.category === '') delete searchQuery.category;
+  //   if (searchQuery.publisher === '') delete searchQuery.publisher;
+  //   const params = new URLSearchParams();
+  //   Object.keys(searchQuery).forEach((key) => {
+  //     const value = searchQuery[key];
+  //     if (value !== undefined && value !== '') {
+  //       params.append(key, value);
+  //     }
+  //   });
+  //   navigate('?' + params.toString());
+  //   getBookList({ ...searchQuery });
+  // }, [searchQuery, navigate]);
+   useEffect(() => {
+    if (Object.values(searchQuery).every(value => value === '')) {
+      setSearchQuery({});
+      return;
+    }
+
     const params = new URLSearchParams();
-    Object.keys(searchQuery).forEach((key) => {
+    Object.keys(searchQuery).forEach(key => {
       const value = searchQuery[key];
-      if (value !== undefined && value !== '') {
+      if (value) {
         params.append(key, value);
       }
     });
+
     navigate('?' + params.toString());
-    dispatch(bookActions.getBookList({ ...searchQuery }));
-  }, [searchQuery, navigate, dispatch]);
+    getBookList(searchQuery);
+  }, [searchQuery, navigate, getBookList]);
 
   // 검색한 값을 리셋하기.
   const resetSearch = () => {
     setSearchQuery({});
+    setQuery({});
   };
   useEffect(() => {
     resetSearch();
-  }, []);
+  }, [setQuery]);
 
   // 도서 생성 다이얼로그 열기.
   const handleOpenNewDialog = () => {
@@ -59,12 +78,12 @@ const AdminProductPage = () => {
   const handleOpenEditDialog = (book) => {
     setEditBook(book);
     setOpenDialog(true);
-    dispatch({ type: types.SET_SELECTED_BOOK, payload: book });
+    setSelectedBook(book);
   };
 
   // 도서 삭제
   const handleDeleteProduct = (bookId) => {
-    dispatch(bookActions.deleteBook(bookId));
+    deleteBook(bookId);
   };
 
   return (

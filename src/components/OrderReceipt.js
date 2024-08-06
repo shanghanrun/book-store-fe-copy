@@ -6,7 +6,7 @@ import paymentIcon from '../assets/payment_icon_yellow_large.png';
 import orderStore from './../store/orderStore';
 import cartStore from '../store/cartStore';
 
-const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartItems, handleCheckout, sticky, shippingInfo = {}, cardInfo = {}, errors, setErrors }) => {
+const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartItems, handleCheckout, sticky, shippingInfo = {}, cardInfo = {}, errors, setErrors, paymentMethod }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const {getCart} = cartStore()
@@ -34,10 +34,12 @@ const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartItems, handleChec
     if (!shippingInfo.phone) newErrors.phone = '전화번호를 입력해 주세요';
     if (!shippingInfo.email) newErrors.email = '이메일를 입력해 주세요';
     if (location.pathname.includes('/payment')) {
-      if (!cardInfo.cardType) newErrors.cardType = '정보를 입력해 주세요';
-      if (!cardInfo.cardNumber) newErrors.cardNumber = '정보를 입력해 주세요';
-      if (!cardInfo.expiryDate) newErrors.expiryDate = '정보를 입력해 주세요';
-      if (!cardInfo.cvc) newErrors.cvc = '정보를 입력해 주세요';
+      if(paymentMethod === 'creditCard'){
+        if (!cardInfo.cardType) newErrors.cardType = '정보를 입력해 주세요';
+        if (!cardInfo.cardNumber) newErrors.cardNumber = '정보를 입력해 주세요';
+        if (!cardInfo.expiryDate) newErrors.expiryDate = '정보를 입력해 주세요';
+        if (!cardInfo.cvc) newErrors.cvc = '정보를 입력해 주세요';
+      }
     }
     console.log(newErrors, 'newErrors');
 
@@ -71,11 +73,20 @@ const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartItems, handleChec
       // await getCart(); 이것은 필요 없을 것 같다.
       // 차라리 cart를 비워야 될 것 같다.. 나중에 추가
 
+      let method;
+      if(paymentMethod ==='creditCart'){
+        method = cardInfo.cardType
+      } else if(paymentMethod ==='transfer'){
+        method = 'transfer'
+      } else {
+        method = 'phonePayment'
+      }
+
       navigate('/payment/success', { //OrderCompletePage
         state: {
           shippingInfo,
           grandTotal,
-          paymentMethod: cardInfo.cardType,
+          paymentMethod: method,
         },
       });
     } catch (error) {
@@ -219,13 +230,19 @@ const OrderReceipt = ({ finalTotalPrice, hasSelectedItems, cartItems, handleChec
           </Typography>
           <Typography>전화번호: {shippingInfo.phone}</Typography>
           <Typography>이메일: {shippingInfo.email}</Typography>
-          {location.pathname.includes('/payment') && (
+          {location.pathname.includes('/payment') && (paymentMethod ==='creditCard') && (
             <>
               <Typography>카드 종류: {cardInfo.cardType}</Typography>
               <Typography>카드 번호: {cardInfo.cardNumber}</Typography>
               <Typography>유효 기간: {cardInfo.expiryDate}</Typography>
               <Typography>CVC: {cardInfo.cvc}</Typography>
             </>
+          )}
+          {location.pathname.includes('/payment') &&(paymentMethod ==='transfer') && (
+            <Typography>결제방법: 무통장입금</Typography>
+          )}
+          {location.pathname.includes('/payment') &&(paymentMethod ==='phonePayment') && (
+            <Typography>결제방법: 휴대폰 결제</Typography>
           )}
         </DialogContent>
         <DialogActions>

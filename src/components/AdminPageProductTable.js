@@ -93,7 +93,12 @@ const AdminPageProductTable = ({ bookList, bookTableHead, handleOpenEditDialog, 
                   </StyledTableRow>
                 ))
               ) : (
-                <StyledTableCell style={{ textAlign: 'center' }}>상품 도서가 존재하지 않습니다.</StyledTableCell>
+                // 이 부분을 수정했습니다: 경고 메시지를 피하기 위해 `<StyledTableRow>`를 추가했습니다.
+                <StyledTableRow>
+                  <StyledTableCell colSpan={8} style={{ textAlign: 'center' }}>
+                    상품 도서가 존재하지 않습니다.
+                  </StyledTableCell>
+                </StyledTableRow>
               )}
             </TableBody>
           </Table>

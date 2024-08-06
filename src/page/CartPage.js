@@ -163,7 +163,7 @@ const CartPage = () => {
 
         {/* 무료 배송 정보 헤더 */}
         <Box display="flex" justifyContent="space-between" mb={2} mt={2} alignItems="center" p={1}>
-          <Typography variant="h6">{recommend}</Typography>
+          <Typography variant="div">{recommend}</Typography>
           <Box>
             <SortMenu
               selectedSortOption={selectedSortOption}

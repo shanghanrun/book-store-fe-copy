@@ -29,7 +29,7 @@ const NavToolbar = () => {
   const navigate = useNavigate();
   const {user, logout} = userStore()
   const {cartItemCount} = cartStore()
-  const {getBookList} = bookStore()
+  const {getBookList,} = bookStore()
   const {setSelectedCategory} = categoryStore()
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -67,7 +67,7 @@ const NavToolbar = () => {
     });
     const query = params.toString();
     navigate('?' + query);
-    getBookList(newSearchQuery);
+    dispatch(bookActions.getBookList(newSearchQuery));
   };
 
   const resetSearch = () => {
@@ -257,10 +257,10 @@ const NavToolbar = () => {
           <SearchBook
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            fields={fields}
-            resetSearch={resetSearch}
             handleSearch={handleSearch}
-            isMobile={isMobile}
+            resetSearch={resetSearch}
+            fields={fields}
+            // isMobile={isMobile}
           />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>

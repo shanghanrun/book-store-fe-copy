@@ -5,21 +5,17 @@ import AdminPageOrderTable from '../components/AdminPageOrderTable';
 import AdminPageOrderDialog from '../components/AdminPageOrderDialog';
 import AdminPageClaimTable from '../components/AdminPageClaimTable';
 import AdminPageClaimDialog from '../components/AdminPageClaimDialog';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { orderActions } from '../action/orderActions';
-import * as types from '../constants/order.constants';
+import orderStore from './../store/orderStore';
 
 const AdminOrderPage = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [openRequestDialog, setOpenRequestDialog] = useState(false);
   const orderTableHead = ['', '주문번호', '주문일자', '구매자', '도서명', '주소', '총 주문액', '주문상태'];
   const claimTableHead = ['', '주문번호', '주문일자', '구매자', '요청사항', '처리상태'];
   const orderDialogTableHead = ['ID', '도서명', '권당 가격', '권수', '총 가격'];
-  const { orderList } = useSelector((state) => state.order);
-  const { requestList } = useSelector((state) => state.order);
+  const { orderList, requestList,getOrderList,getRequestList,setSelectedOrder, setSelectedRequest } = orderStore();
   const [query, setQuery] = useSearchParams();
   const fields = ['orderNum', 'userName'];
   const [tabIndex, setTabIndex] = useState(0);
@@ -46,8 +42,8 @@ const AdminOrderPage = () => {
       }
     });
     navigate('?' + params.toString());
-    dispatch(orderActions.getOrderList({ ...searchQuery }));
-    dispatch(orderActions.getRequestList({ ...searchQuery }));
+    getOrderList({ ...searchQuery });
+    getRequestList({ ...searchQuery });
   }, [searchQuery]);
 
   // 검색한 값을 리셋하기.
@@ -70,11 +66,11 @@ const AdminOrderPage = () => {
   // 주문 수정 다이얼로그 열기.
   const handleOpenOrderDialog = (order) => {
     setOpenDialog(true);
-    dispatch({ type: types.SET_SELECTED_ORDER, payload: order });
+    setSelectedOrder(order);
   };
   const handleOpenRequestDialog = (request) => {
     setOpenRequestDialog(true);
-    dispatch({ type: types.SET_SELECTED_REQUEST, payload: request });
+    setSelectedRequest(request);
   };
 
   // 주문 다이얼로그 닫기.

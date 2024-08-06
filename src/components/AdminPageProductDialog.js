@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { bookActions } from '../action/bookActions';
 import CloudImageUpload from '../utils/CloudImageUpload';
 import { currencyFormat } from '../utils/number';
+import bookStore from './../store/bookStore';
 
 const AdminPageProductDialog = ({ open, editBook, setEditBook, setOpenDialog }) => {
   const initialBookState = {
@@ -18,9 +17,7 @@ const AdminPageProductDialog = ({ open, editBook, setEditBook, setOpenDialog }) 
     priceSales: '',
     stockStatus: '',
   };
-  const dispatch = useDispatch();
-  const { error } = useSelector((state) => state.book);
-  const { selectedBook } = useSelector((state) => state.book);
+  const {error, selectedBook, createBook, updateBook} = bookStore();
   const [bookForm, setBookForm] = useState(editBook || { ...initialBookState });
   const [imagePreview, setImagePreview] = useState('');
 
@@ -68,9 +65,9 @@ const AdminPageProductDialog = ({ open, editBook, setEditBook, setOpenDialog }) 
       return alert('폼이 비어 있습니다.');
     }
     if (editBook) {
-      dispatch(bookActions.updateBook({ ...bookForm }, selectedBook._id));
+      updateBook({ ...bookForm }, selectedBook._id);
     } else {
-      dispatch(bookActions.createBook({ ...bookForm }));
+      createBook({ ...bookForm });
     }
     handleCloseDialog();
   };

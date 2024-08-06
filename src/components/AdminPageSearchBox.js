@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuItem from '@mui/material/MenuItem';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -9,6 +10,7 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/system';
 import { Grid } from '@mui/material';
+import bookStore from './../store/bookStore';
 
 const NewButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.grey[200],
@@ -19,68 +21,84 @@ const NewButton = styled(Button)(({ theme }) => ({
 }));
 
 const AdminPageSearchBox = ({ searchQuery, setSearchQuery, fields, resetSearch, handleOpenNewDialog }) => {
-  const [selectedField, setSelectedField] = useState(fields[0]); // isbn
+  const [selectedField, setSelectedField] = useState(fields[1]); // title
+  const [inputValue, setInputValue] = useState('');
   const isMobile = useMediaQuery('(max-width:600px)');
-
-  // const onCheckEnter = (event, item) => {
-  //   if (event && event.key === 'Enter') {
-  //     event.preventDefault();
-  //     setSearchQuery({ ...searchQuery, [item]: event.target.value });
-  //   }
-  // };
+  const {getBookList} = bookStore()
 
   const handleChange = (event) => {
-    event.preventDefault();
-    setSelectedField(event.target.value);
+    const value = event.target.value;
+    if (fields.includes(value)) {
+      setSelectedField(value);
+    } else {
+      setSelectedField(fields[1]);
+    }
   };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();//기본 엔터키 동작방지
+      if(inputValue.trim() === ''){
+        //빈 문자열일 경우 모든 항목을 검색
+        setSearchQuery({});
+        getBookList({})
+      } else{
+        //입력된 검색어로 검색
+        setSearchQuery({ ...searchQuery, [selectedField]: inputValue });
+      }
+      setInputValue('') // 검색란 비우기
+    }
+  };
+
 
   return (
     <>
       {isMobile ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {/* NEW 버튼 */}
           <NewButton variant="contained" onClick={handleOpenNewDialog}>
             New
           </NewButton>
-
-          {/* 검색 박스 */}
           <Box
             component="form"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-            }}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             noValidate
-            autoComplete="off">
+            autoComplete="off"
+          >
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Grid item xs={3}>
-                {/* 검색 필드 선택 */}
-                <TextField select label="Search by" value={selectedField} onChange={handleChange} variant="standard" sx={{ width: '100%' }}>
-                  {/* 선택할 검색 필드 목록 */}
+                <TextField 
+                  select 
+                  label="Search by" 
+                  value={selectedField} 
+                  onChange={handleChange} 
+                  variant="standard" 
+                  sx={{ width: '100%' }}
+                  InputProps={{
+                    startAdornment:(
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    )
+                  }}
+                >
                   {fields.map((item) => (
-                    <MenuItem key={item} value={item || ''}>
+                    <MenuItem key={item} value={item}>
                       {item}
                     </MenuItem>
                   ))}
                 </TextField>
               </Grid>
-
               <Grid item xs={9}>
-                {/* 선택된 필드에 따른 검색 창 */}
                 <TextField
-                  id={`standard-input-${selectedField}`}
                   label={`Search ${selectedField}`}
-                  placeholder={`Search ${selectedField}`}
                   variant="standard"
-                  value={searchQuery[selectedField] || ''}
-                  onChange={(event) => setSearchQuery({ ...searchQuery, [selectedField]: event.target.value })}
+                  value={inputValue}
+                  onChange={(event) => setInputValue(event.target.value)}
+                  onKeyPress={handleKeyPress}
                   sx={{ width: '100%' }}
                 />
               </Grid>
             </Box>
-
-            {/* 검색 버튼과 초기화 버튼 */}
             <Grid item xs={12} mb={2}>
               <Button variant="contained" color="secondary" onClick={resetSearch} sx={{ width: '100%' }}>
                 초기화
@@ -90,51 +108,45 @@ const AdminPageSearchBox = ({ searchQuery, setSearchQuery, fields, resetSearch, 
         </Box>
       ) : (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          {/* NEW 버튼 */}
           <NewButton variant="contained" sx={{ mt: 2, height: '5ch' }} onClick={handleOpenNewDialog}>
             New
           </NewButton>
-
-          {/* 검색 박스 */}
           <Box
             component="form"
-            sx={{
-              // display: 'flex',
-              // justifyContent: 'flex-end',
-              '& .MuiTextField-root': { mt: 1 },
-            }}
+            sx={{ '& .MuiTextField-root': { mt: 1 } }}
             noValidate
-            autoComplete="off">
+            autoComplete="off"
+          >
             <div>
-              {/* 검색 필드 선택 */}
-              <TextField select label="Search by" onChange={handleChange} variant="standard" sx={{ mt: 1, width: '11ch' }}>
-                {/* 선택할 검색 필드 목록 */}
+              <TextField 
+                select 
+                label="Search by" 
+                value={selectedField} 
+                onChange={handleChange} 
+                variant="standard" 
+                sx={{ mt: 1, width: '11ch' }}
+                InputProps={{
+                    startAdornment:(
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    )
+                  }}
+              >
                 {fields.map((item) => (
-                  <MenuItem key={item} value={item || ''}>
+                  <MenuItem key={item} value={item}>
                     {item}
                   </MenuItem>
                 ))}
               </TextField>
-
-              {/* 선택된 필드에 따른 검색 창 */}
               <TextField
-                id={`standard-input-${selectedField}`}
-                label="반갑습니다, 관리자님."
-                placeholder={`${selectedField}을(를) 검색하세요.`}
+                label={`Search ${selectedField}`}
                 variant="standard"
-                // onKeyPress={onCheckEnter}
-                value={searchQuery[selectedField] || ''}
-                onChange={(event) => setSearchQuery({ ...searchQuery, [selectedField]: event.target.value })}
+                value={inputValue}
+                onChange={(event) => setInputValue(event.target.value)}
+                onKeyPress={handleKeyPress}
                 sx={{ mt: 1, width: '25ch' }}
               />
-              <IconButton type="button" sx={{ mt: 3 }} aria-label="search">
-                <SearchIcon />
-              </IconButton>
-
-              {/* 검색 필드 초기화 버튼 */}
-              <IconButton type="button" sx={{ mt: 3 }} aria-label="reset" onClick={resetSearch}>
-                <RefreshIcon />
-              </IconButton>
             </div>
           </Box>
         </div>

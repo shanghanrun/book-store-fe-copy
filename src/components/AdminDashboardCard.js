@@ -17,7 +17,7 @@ const AdminDashboardCard = ({ title, content, onClick }) => {
         <Typography variant="h5" component="h2">
           {title}
         </Typography>
-        <Typography variant="body2" component="p">
+        <Typography variant="body2" component="div">
           {content}
         </Typography>
       </CardContent>

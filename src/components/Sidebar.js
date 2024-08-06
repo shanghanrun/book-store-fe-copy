@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Box, List, ListItem, ListItemIcon, ListItemText, IconButton, Drawer, useMediaQuery, useTheme } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
+
 import MenuIcon from '@mui/icons-material/Menu';
+import HomeIcon from '@mui/icons-material/Home';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import OrderIcon from '@mui/icons-material/Receipt';
@@ -20,12 +21,12 @@ const Sidebar = () => {
     }
   };
 
-  const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-    setIsDrawerOpen(open);
-  };
+  // const toggleDrawer = (open) => (event) => {
+  //   if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+  //     return;
+  //   }
+  //   setIsDrawerOpen(open);
+  // };
 
   const drawerContent = (
     <Box
@@ -34,9 +35,9 @@ const Sidebar = () => {
         flexShrink: 0,
         '& .MuiDrawer-paper': { width: 240, boxSizing: 'border-box' },
       }}
-      role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}>
+      role="presentation">
+      {/* // onClick={()=>setIsDrawerOpen(false)}
+      // onKeyDown={()=>setIsDrawerOpen(false)}> */}
       <List>
         <ListItem button onClick={() => handleNavigation('/')}>
           <ListItemIcon>
@@ -74,7 +75,7 @@ const Sidebar = () => {
             edge="start"
             color="inherit"
             aria-label="menu"
-            onClick={toggleDrawer(true)}
+            onClick={()=>setIsDrawerOpen(true)}
             sx={{
               marginLeft: '10px', // 왼쪽에서 조금 띄어줌
               '&:hover': {
@@ -83,18 +84,12 @@ const Sidebar = () => {
             }}>
             <MenuIcon />
           </IconButton>
-          <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
+          <Drawer anchor="left" open={isDrawerOpen} >
             {drawerContent}
           </Drawer>
         </>
       ) : (
-        <Box
-          sx={{
-            width: 240,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': { width: 240, boxSizing: 'border-box' },
-          }}
-          role="presentation">
+        <Box>
           {drawerContent}
         </Box>
       )}

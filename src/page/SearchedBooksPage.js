@@ -1,13 +1,13 @@
-import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Container, Grid, Typography, Button } from '@mui/material';
 import BookCard from '../components/BookCard';
 import Box from '@mui/material/Box';
 import NotFoundPage from './NotFoundPage';
+import bookStore from '../store/bookStore';
 
 const SearchedBooksPage = () => {
-  const { bookList } = useSelector((state) => state.book);
+  const { bookList } = bookStore();
   const [searchParams] = useSearchParams();
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [visibleBooks, setVisibleBooks] = useState([]);

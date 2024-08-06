@@ -57,13 +57,14 @@ const AdminPermissionsModal = ({
                 <TableRow key={admin._id}>
                   <TableCell>{admin._id}</TableCell>
                   <TableCell>
-                    <TextField value={admin.userName} onChange={(event) => handleNameChange(admin._id, event)} variant="outlined" size="small" />
+                    <TextField name="userName" value={admin.userName} onChange={(event) => handleNameChange(admin._id, event)} variant="outlined" size="small" />
                   </TableCell>
                   <TableCell>
-                    <TextField value={admin.email} onChange={(event) => handleEmailChange(admin._id, event)} variant="outlined" size="small" />
+                    <TextField name="email" value={admin.email} onChange={(event) => handleEmailChange(admin._id, event)} variant="outlined" size="small" />
                   </TableCell>
                   <TableCell>
                     <TextField
+                      name="password"
                       value={admin.password}
                       onChange={(event) => handlePasswordChange(admin._id, event)}
                       variant="outlined"
@@ -74,7 +75,7 @@ const AdminPermissionsModal = ({
                   <TableCell>
                     <FormControl variant="outlined" size="small" fullWidth>
                       <InputLabel>역할</InputLabel>
-                      <Select value={admin.role} onChange={(event) => handleRoleChange(admin._id, event)} label="역할">
+                      <Select name="role" value={admin.role} onChange={(event) => handleRoleChange(admin._id, event)} label="역할">
                         <MenuItem value="admin">Admin</MenuItem>
                         <MenuItem value="customer">Customer</MenuItem>
                       </Select>
@@ -95,7 +96,7 @@ const AdminPermissionsModal = ({
                     onChange={(event) => setNewAdmin({ ...newAdmin, userName: event.target.value })}
                     variant="outlined"
                     size="small"
-                    placeholder="새 어드민 이름"
+                    placeholder="이름"
                   />
                 </TableCell>
                 <TableCell>
@@ -104,7 +105,7 @@ const AdminPermissionsModal = ({
                     onChange={(event) => setNewAdmin({ ...newAdmin, email: event.target.value })}
                     variant="outlined"
                     size="small"
-                    placeholder="새 어드민 이메일"
+                    placeholder="이메일"
                   />
                 </TableCell>
                 <TableCell>
@@ -113,7 +114,7 @@ const AdminPermissionsModal = ({
                     onChange={(event) => setNewAdmin({ ...newAdmin, password: event.target.value })}
                     variant="outlined"
                     size="small"
-                    placeholder="새 어드민 비밀번호"
+                    placeholder="비밀번호"
                     type="password"
                   />
                 </TableCell>
